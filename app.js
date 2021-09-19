@@ -31,19 +31,6 @@ try {
 
 
 
-/*const Publication = sequelize.define('publication', {
-  id: { type: Sequelize.SMALLINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-  user_id: { type: Sequelize.SMALLINT.UNSIGNED, references: { model: User, key: 'id' } },
-  title: { type: Sequelize.STRING(50), allowNull: false },
-  content: { type: Sequelize.TEXT, allowNull: false },
-  image: {  type: Sequelize.BLOB, allowNull:true },
-  likes: { type: Sequelize.SMALLINT, allowNull: true},
-},
-{tableName: 'Publications', timestamps: false, underscored: true}
-);
-
-Publication.sync({ force: true });*/
-
 /*const Comment = sequelize.define('comment', {
   id: { type: Sequelize.SMALLINT.UNSIGNED, autoIncrement: true, primaryKey: true },
   user_id: { type: Sequelize.SMALLINT.UNSIGNED, references: { model: User, key: 'id' } },
@@ -52,7 +39,6 @@ Publication.sync({ force: true });*/
 });*/
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 

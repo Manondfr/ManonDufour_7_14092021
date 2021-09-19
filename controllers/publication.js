@@ -33,21 +33,27 @@ exports.createPublication = (req, res, next) => {
     )
 }
 
-/*exports.updatePublication = (req, res, next) => {
-    const publicationObject = req.file ?
-    {
-      ...JSON.parse(req.body.publication),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
-    Publication.findOne({ _id: req.params.id })
-    .then(publication => {
-      publication = publicationObject;
-      publication.save()
-      .then(() => res.status(200).json({ message: 'Publication mise à jour'}))
-      .catch(error => res.status(400).json({ error }))
-    })
-    .catch(error => res.status(500).json({ error }));
-};*/
+exports.updatePublication = (req, res, next) => {
+  Publication.update({ 
+    title: req.body.title,
+    content:req.body.content,
+    image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+  }, { where: { id: req.params.id }})
+  .then(
+    () => {
+      res.status(200).json({
+        message: 'Publication mise à jour !'
+      });
+    }
+  )
+  .catch(
+    (error) => {
+      res.status(400).json({
+        error: error
+      });
+    }
+  )
+};
 
 exports.deletePublication = (req, res, next) => {
     Publication.findOne({ where: { id: req.params.id } })
