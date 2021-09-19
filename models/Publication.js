@@ -12,7 +12,7 @@ const Publication = sequelize.define('publication', {
   user_id: { type: Sequelize.SMALLINT.UNSIGNED, allowNull: false, references: { model: User, key: 'id' } },
   title: { type: Sequelize.STRING(50), allowNull: false },
   content: { type: Sequelize.TEXT, allowNull: false },
-  image: {  type: Sequelize.BLOB, allowNull:true },
+  image: {  type: Sequelize.STRING, allowNull:false },
   likes: { type: Sequelize.SMALLINT, allowNull: true},
 },
 {tableName: 'Publications', timestamps: false, underscored: true}
@@ -20,8 +20,8 @@ const Publication = sequelize.define('publication', {
 
 Publication.sync({force:true});
 
-async() => {
+/*async() => {
   await Publication.sync({ alter: true });
-}
+}*/
 
 module.exports = Publication;

@@ -50,17 +50,17 @@ exports.createPublication = (req, res, next) => {
 };*/
 
 exports.deletePublication = (req, res, next) => {
-    Publication.findOne({ _id: req.params.id })
+    Publication.findOne({ where: { id: req.params.id } })
       .then(publication => {
-        //const filename = sauce.imageUrl.split('/images/')[1];
-        //fs.unlink(`images/${filename}`, () => {
-          publication.destroy({ _id: req.params.id })
+        const filename = publication.image.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {
+          publication.destroy({ where: { id: req.params.id }})
             .then(() => res.status(200).json({ message: 'Publication supprimée !'}))
             .catch(error => res.status(400).json({ error }));
-        //});
+        });
       })
       .catch(error => res.status(500).json({ error }));
-  };
+}
 
 exports.getAllPublications = (req, res, next) => {
     Publication.findAll()
