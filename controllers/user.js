@@ -1,33 +1,44 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const passwordValidator = require('password-validator');
-const schema = new passwordValidator();
+const { Sequelize, Model, DataTypes } = require("sequelize");
+const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {
+    host: 'localhost',
+    dialect: 'mysql',
+    logging: false,
+});  
 
-schema.is().min(5);
+//const bcrypt = require('bcrypt');
+//const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+//const passwordValidator = require('password-validator');
+//const schema = new passwordValidator();
+
 
 
 exports.signup = (req, res, next) => {
-  if(schema.validate(req.body.password)) {
-    bcrypt.hash(req.body.password)
-    .then(hash => {
-      User.create({
-        email: req.body.email,
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        password: hash
-      })
-      .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-      .catch(error => res.status(400).json({ error }));
-    })
-    .catch(error => res.status(500).json({ error }))
-  } else if(!schema.validate(body.password)) {
-    return res.status(400).json({ error });
-  }
+  User.create({
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: req.body.password
+  })
+    .then(
+        () => {
+            res.status(201).json({
+              message: 'Publication créée !'
+            });
+          }
+    )
+    .catch(
+        (error) => {
+            res.status(400).json({
+              error: error
+            });
+          }
+    )
 };
 
 exports.login = (req, res, next) => {
-  User.findOne({ email: req.body.email })
+  console.log(req.body.email);
+  User.findOne({ where: {email: req.body.email} })
     .then(user => {
       if (!user) {
         return res.status(401).json({ error });

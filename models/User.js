@@ -20,6 +20,7 @@ const User = sequelize.define('user', {
   },
         {tableName: 'Users', timestamps: false}
   );
+
   
 async() => {
     await User.sync({ alter: true });

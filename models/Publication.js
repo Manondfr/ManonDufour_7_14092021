@@ -18,10 +18,9 @@ const Publication = sequelize.define('publication', {
 {tableName: 'Publications', timestamps: false, underscored: true}
 );
 
-Publication.sync({force:true});
 
-/*async() => {
+async() => {
   await Publication.sync({ alter: true });
-}*/
+}
 
 module.exports = Publication;

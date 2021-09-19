@@ -4,6 +4,7 @@ const path = require('path');
 
 const userRoutes = require('./routes/user');
 const publicationRoutes= require('./routes/publication');
+const commentRoutes= require('./routes/comment');
 
 
 app.use((req, res, next) => {
@@ -29,21 +30,13 @@ try {
   console.error('Unable to connect to the database:', error);
 }
 
-
-
-/*const Comment = sequelize.define('comment', {
-  id: { type: Sequelize.SMALLINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-  user_id: { type: Sequelize.SMALLINT.UNSIGNED, references: { model: User, key: 'id' } },
-  publication_id: { type: Sequelize.SMALLINT.UNSIGNED, references: { model: Publication, key: 'id' }, allowNull:false },
-  commentContent:  { type: Sequelize.TEXT, allowNull: false }  
-});*/
-
 app.use(express.json());
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/auth', userRoutes);
 app.use('/api/publications', publicationRoutes);
+app.use('/api/publications/:id/comments', commentRoutes);
 
 
 

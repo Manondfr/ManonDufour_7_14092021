@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-//const urlEncoded = express.urlencoded({extended:true});
 
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
