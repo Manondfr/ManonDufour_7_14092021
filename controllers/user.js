@@ -5,35 +5,32 @@ const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {
     logging: false,
 });  
 
-//const bcrypt = require('bcrypt');
-//const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-//const passwordValidator = require('password-validator');
-//const schema = new passwordValidator();
+const passwordValidator = require('password-validator');
+const schema = new passwordValidator();
 
+schema.is().min(5);
 
 
 exports.signup = (req, res, next) => {
-  User.create({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: req.body.password
-  })
-    .then(
-        () => {
-            res.status(201).json({
-              message: 'Publication créée !'
-            });
-          }
-    )
-    .catch(
-        (error) => {
-            res.status(400).json({
-              error: error
-            });
-          }
-    )
+  if(schema.validate(req.body.password)) {
+    bcrypt.hash(req.body.password, 10)
+    .then(hash => {
+      User.create({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        password: hash
+      })
+      .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+      .catch(error => res.status(400).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }))
+  } else if(!schema.validate(req.body.password)) {
+    return res.status(400).json({ error });
+  }
 };
 
 exports.login = (req, res, next) => {
