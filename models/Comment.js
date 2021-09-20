@@ -1,6 +1,6 @@
 const User = require('./User');
 const Publication = require('./Publication');
-const express = require('express');
+
 
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {

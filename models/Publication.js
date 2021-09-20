@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/User'); 
 
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {

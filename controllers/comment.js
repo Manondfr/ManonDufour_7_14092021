@@ -9,8 +9,6 @@ const Comment = require('../models/Comment');
 
 
 
-
-
 exports.createComment = (req, res, next) => {   
     Comment.create ({
       user_id : req.body.user_id,
@@ -31,6 +29,26 @@ exports.createComment = (req, res, next) => {
               });
             }
       )
+  };
+
+  exports.updateComment = (req, res, next) => {
+    Comment.update({
+      commentContent: req.body.commentContent
+    }, { where: { id: req.params.commentid }})
+    .then(
+      () => {
+        res.status(200).json({
+          message: 'Commentaire mis à jour !'
+        });
+      }
+    )
+    .catch(
+      (error) => {
+        res.status(400).json({
+          error: error
+        });
+      }
+    )
   };
 
 

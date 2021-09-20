@@ -13,4 +13,4 @@ router.delete('/:id', /*auth,*/ publicationCtrl.deletePublication);
 
 
 
-module.exports = router;
+module.exports = router; 
