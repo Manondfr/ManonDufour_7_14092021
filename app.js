@@ -30,6 +30,7 @@ try {
   console.error('Unable to connect to the database:', error);
 }
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
 

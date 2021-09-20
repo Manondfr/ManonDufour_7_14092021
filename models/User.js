@@ -12,13 +12,13 @@ const User = sequelize.define('user', {
     last_name: { type: Sequelize.STRING(35), allowNull: false, },
     email: { type: Sequelize.STRING(35), allowNull: false, unique: true },
     password: { type: Sequelize.STRING, allowNull: false, },
-    /*gender: { type: Sequelize.STRING(1), allowNull:true },
+    gender: { type: Sequelize.STRING(1), allowNull:true },
     birthday: { type: Sequelize.DATEONLY, allowNull:true },
     occupation: { type: Sequelize.STRING(35), allowNull:true },
     about: { type: Sequelize.STRING(250), allowNull:true },
-    profilePicture: { type: Sequelize.BLOB, allowNull:true}*/
+    profilePicture: { type: Sequelize.STRING, allowNull:true}
   },
-        {tableName: 'Users', timestamps: false}
+        {tableName: 'Users', timestamps: true}
   );
 
   
