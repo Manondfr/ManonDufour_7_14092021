@@ -1,9 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {
-    host: 'localhost',
-    dialect: 'mysql',
-    logging: false,
-}); 
+const sequelize = require('../connexion');
+
 
 //Je crée le modèle User dans ma database
 const User = sequelize.define('user', {
@@ -16,18 +13,17 @@ const User = sequelize.define('user', {
     birthday: { type: Sequelize.DATEONLY, allowNull:true },
     occupation: { type: Sequelize.STRING(35), allowNull:true },
     about: { type: Sequelize.STRING(250), allowNull:true },
-    profilePicture: { type: Sequelize.STRING, allowNull:true}
+    profilePicture: { type: Sequelize.STRING, allowNull:true},
+    admin: { type: Sequelize.BOOLEAN, allowNull:false, defaultValue:false }
   },
         {tableName: 'Users', timestamps: true}
   );
 
-  
 async() => {
     await User.sync({ alter: true });
 }
 
-
-  module.exports = User;
+module.exports = User;
 
 
 

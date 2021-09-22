@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>.</title> <!-- Titre à remplir -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"> <!-- favicon à mettre en place --> 
+    <!-- Penser à intégrer les balises description et robots -->
+</head>
+<body>
+    <div id="app">
+        <h1> {{ message }}</h1>
+      </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'BIENVENUE !'
+        },
+        created() {
+                console.log('message is: ' + this.message)
+        }
+        })
+    </script>
+</body>
+</html>

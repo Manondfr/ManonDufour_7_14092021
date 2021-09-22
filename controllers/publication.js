@@ -1,10 +1,4 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {
-    host: 'localhost',
-    dialect: 'mysql',
-    logging: false,
-});  
-
+const { Sequelize, Model, DataTypes, Op } = require("sequelize");
 const fs = require('fs');
 const Publication = require('../models/Publication');
 
@@ -12,7 +6,7 @@ const Publication = require('../models/Publication');
 
 exports.createPublication = (req, res, next) => {   
   Publication.create ({
-    user_id : req.body.user_id,
+    user_id : req.body.userId,
     title: req.body.title,
     content: req.body.content,
     image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -32,6 +26,22 @@ exports.createPublication = (req, res, next) => {
           }
     )
 }
+
+exports.getOnePublication = (req, res, next) => {
+  Publication.findOne({ where: { id: req.params.id }})
+  .then(
+      (publication) => {
+          res.status(200).json(publication);
+      }
+  )
+  .catch(
+      (error) => {
+          res.status(404).json({
+            error: error
+          });
+        }
+  );
+};
 
 exports.updatePublication = (req, res, next) => {
   Publication.findOne({ where: { id: req.params.id }})
@@ -79,10 +89,36 @@ exports.deletePublication = (req, res, next) => {
         });
       })
       .catch(error => res.status(500).json({ error }));
-}
+};
+
+exports.defineLikeStatus = (req, res, next) => {  
+  Publication.findOne({ where: { id: req.params.id } })
+  .then(publication => {
+    if(req.body.like === 1) {
+      publication.increment('likes', {by: 1} )
+      .then(
+        () => res.status(200).json({ message: 'Publication likée !' })
+        )
+      .catch(error => res.status(400).json({ error }));
+    } else {
+      publication.decrement('likes', {by: 1} )
+      .then(
+        () => res.status(200).json({ message: 'Like de la publication annulé !' })
+        )
+      .catch(error => res.status(400).json({ error }));
+    }
+  })
+  .catch(
+    (error) => {
+      res.status(404).json({
+        error: error
+      })
+    }
+  )
+};
 
 exports.getAllPublications = (req, res, next) => {
-    Publication.findAll()
+    Publication.findAll({ order: [['created_at', 'DESC']]})
     .then(
         (publications) => {
             res.status(200).json(publications);

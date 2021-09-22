@@ -1,19 +1,41 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {
-    host: 'localhost',
-    dialect: 'mysql',
-    logging: false,
-});  
-
+const MaskData = require('maskdata');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Publication = require('../models/Publication');
 const passwordValidator = require('password-validator');
 const schema = new passwordValidator();
 const fs = require('fs');
 
-schema.is().min(5);
+//schema.is().min(5).has().uppercase().has().digits(1).has().not().spaces();
 
+const emailMaskOptions = {
+  maskWith: "*", 
+  unmaskedStartCharactersBeforeAt: 1,
+  unmaskedEndCharactersAfterAt: 2,
+  maskAtTheRate: false
+};
+
+exports.createAdminAccount = (req, res, next) => {
+  if(schema.validate(req.body.password)) {
+    bcrypt.hash(req.body.password, 10)
+    .then(hash => {
+      User.create({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: MaskData.maskEmail2(req.body.email, emailMaskOptions),
+        password: hash,
+        admin: true
+      })
+      .then(() => res.status(201).json({ message: 'Compte administrateur créé !' }))
+      .catch(error => res.status(400).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }))
+  } else if(!schema.validate(req.body.password)) {
+    return res.status(400).json({ error });
+  }
+};
 
 exports.signup = (req, res, next) => {
   if(schema.validate(req.body.password)) {
@@ -22,7 +44,7 @@ exports.signup = (req, res, next) => {
       User.create({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        email: req.body.email,
+        email: MaskData.maskEmail2(req.body.email, emailMaskOptions),
         password: hash
       })
       .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
@@ -47,6 +69,7 @@ exports.login = (req, res, next) => {
           }
           res.status(200).json({
             userId: user.id,
+            admin: user.admin,
             token: jwt.sign(
               { userId: user.id },
               'RANDOM_TOKEN_SECRET',
@@ -57,6 +80,38 @@ exports.login = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
+  };
+
+  exports.getOneUser = (req, res, next) => {
+    User.findOne({ where: { id: req.params.id }})
+    .then(
+        (user) => {
+            res.status(200).json(user);
+        }
+    )
+    .catch(
+        (error) => {
+            res.status(404).json({
+              error: error
+            });
+          }
+    );
+  };
+
+  exports.getPublicationsByUser = (req, res, next) => {
+    Publication.findAll({ where: { user_id: req.params.id }, order: [['created_at', 'DESC']] })
+    .then(
+      (publications) => {
+          res.status(200).json(publications);
+      }
+  )
+  .catch(    
+      (error) => {
+        res.status(404).json({
+          error: error
+        });
+      }
+    );
   };
 
   exports.updateUserInfos = (req, res, next) => {

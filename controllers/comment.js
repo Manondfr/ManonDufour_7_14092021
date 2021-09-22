@@ -1,18 +1,10 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {
-    host: 'localhost',
-    dialect: 'mysql',
-    logging: false,
-});  
-
 const Comment = require('../models/Comment');
-
-
 
 exports.createComment = (req, res, next) => {   
     Comment.create ({
-      user_id : req.body.user_id,
-      publication_id : req.body.publication_id,
+      user_id : req.body.userId,
+      publication_id : req.params.id,
       commentContent: req.body.commentContent,
     })
       .then(
