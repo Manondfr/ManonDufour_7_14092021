@@ -1,9 +1,10 @@
 <template>
   <div id="app">
       <router-view/>
-       <router-link to="/signup">S'inscrire</router-link> |
-      <router-link to="/login">Se connecter</router-link> |
-      <router-link to="/homepage">Page d'accueil</router-link>
+        <router-link to="/signup">S'inscrire</router-link> |
+        <router-link to="/login">Se connecter</router-link> |
+        <router-link to="/homepage">Page d'accueil</router-link> |
+        <router-link to="/profile">Profil</router-link>
   </div>
   
 </template>
@@ -36,11 +37,16 @@ header {
   width:100%;
   padding:0;
   margin:0;
-  box-shadow: 0px 1px 5px -2px lighten(rgba(253, 45, 1, 0.05), 10%);
+  //box-shadow: 0px 1px 5px -2px lighten(rgba(253, 45, 1, 0.05), 10%);
+  background-color: rgba(255, 215, 215, 0.15);
+  height:80px;
+
 }
 
 header img {
   height:80px;
+  width:200px;
+  opacity:0.7;
 }
 
 h1 {
@@ -124,5 +130,11 @@ a {
 
 span {
   color: rgb(253, 45, 1);
+}
+
+
+p {
+    width:50px;
+    margin:0 25px 0px 25px;
 }
 </style>

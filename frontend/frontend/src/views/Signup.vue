@@ -1,6 +1,6 @@
 <template>
   <header>
-    <p><img src="../assets/icon-left-font.png" alt="Logo OhMyFood!"></p>
+    <p><img src="../assets/icon-left-font-monochrome-black.svg" alt="Logo Groupomania"></p>
   </header>
   <main>
     <div class="logBox">
@@ -20,3 +20,17 @@
 <script>
 
 </script>
+
+<style>
+.publiBox, .publications {
+    width:50%;
+    height: 100px;
+    margin:auto;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+hr {
+  margin-top: 20px;
+}
+
+</style>

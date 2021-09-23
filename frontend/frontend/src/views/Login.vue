@@ -1,6 +1,6 @@
 <template>
   <header>
-    <p><img src="../assets/icon-left-font.png" alt="Logo OhMyFood!"></p>
+    <p><img src="../assets/icon-left-font-monochrome-black.svg" alt="Logo Groupomania"></p>
   </header>
   <main>
     <div class="logBox">
@@ -20,5 +20,6 @@
 </script>
 
 <style>
+
 
 </style>
