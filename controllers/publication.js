@@ -1,13 +1,13 @@
 const { Sequelize, Model, DataTypes, Op } = require("sequelize");
 const fs = require('fs');
 const Publication = require('../models/Publication');
+const User = require('../models/User');
 
 
 
 exports.createPublication = (req, res, next) => {   
   Publication.create ({
     user_id : req.body.userId,
-    title: req.body.title,
     content: req.body.content,
     image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   })
@@ -49,7 +49,6 @@ exports.updatePublication = (req, res, next) => {
     const filename = publication.image.split('/images/')[1];
     fs.unlink(`images/${filename}`, () => {
       publication.update({
-        title: req.body.title,
         content: req.body.content,
         image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
       }, { where: { id: req.params.id }})
@@ -118,7 +117,7 @@ exports.defineLikeStatus = (req, res, next) => {
 };
 
 exports.getAllPublications = (req, res, next) => {
-    Publication.findAll({ order: [['created_at', 'DESC']]})
+    Publication.findAll({ order: [['created_at', 'DESC']], include: [User] })
     .then(
         (publications) => {
             res.status(200).json(publications);

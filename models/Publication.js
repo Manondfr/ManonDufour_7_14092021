@@ -7,7 +7,6 @@ const sequelize = require('../connexion');
 const Publication = sequelize.define('publication', {
   id: { type: Sequelize.SMALLINT.UNSIGNED, autoIncrement: true, primaryKey: true },
   user_id: { type: Sequelize.SMALLINT.UNSIGNED, allowNull: false },
-  title: { type: Sequelize.STRING(50), allowNull: false },
   content: { type: Sequelize.TEXT, allowNull: false },
   image: {  type: Sequelize.STRING, allowNull:false },
   likes: { type: Sequelize.SMALLINT, allowNull: false, defaultValue: 0 },
@@ -16,10 +15,13 @@ const Publication = sequelize.define('publication', {
 {tableName: 'Publications', timestamps: true, underscored: true}
 );
 
-User.hasOne(Publication, {onDelete: 'CASCADE'});
+User.hasMany(Publication, {foreignKey: 'user_id'}, {onDelete: 'CASCADE'});
+Publication.belongsTo(User, {foreignKey: 'user_id'});
+
+
 
 async() => {
   await Publication.sync({ alter: true });
 }
 
-module.exports = Publication;
+module.exports = Publication; 

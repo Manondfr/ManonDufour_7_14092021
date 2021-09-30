@@ -1,10 +1,8 @@
 <template>
   <div id="app">
       <router-view/>
-        <router-link to="/signup">S'inscrire</router-link> |
-        <router-link to="/login">Se connecter</router-link> |
-        <router-link to="/homepage">Page d'accueil</router-link> |
-        <router-link to="/profile">Profil</router-link>
+        <router-link v-if="$route.path == '/signup' || $route.path == '/login'" to="/signup">S'inscrire</router-link> <span v-if="$route.path == '/signup' || $route.path == '/login'">| </span> 
+        <router-link v-if="$route.path == '/signup' || $route.path == '/login'" to="/login">Se connecter</router-link> 
   </div>
   
 </template>
@@ -28,7 +26,7 @@
 body {
   margin:0;
   padding:0;
-  background: url("./assets/icon.png") no-repeat top center; 
+  background: url("./assets/icon.png") no-repeat top center fixed; 
   background-size: 800px;
   height:800px;
 }
@@ -37,10 +35,10 @@ header {
   width:100%;
   padding:0;
   margin:0;
-  //box-shadow: 0px 1px 5px -2px lighten(rgba(253, 45, 1, 0.05), 10%);
-  background-color: rgba(255, 215, 215, 0.15);
+  box-shadow: 0 4px 2px -2px darken(rgba(255, 215, 215, 0.15), 80%);
+  //background-color: rgba(255, 215, 215, 0.15);
+  //background-color: rgba(0, 0, 0, 0.05);
   height:80px;
-
 }
 
 header img {
@@ -126,12 +124,17 @@ a {
   &.router-link-exact-active {
     color: rgba(253, 45, 1, 0.9);
   }
+
+  &.homepage {
+    padding-right:25px;
+    position:relative;
+    top:-5px;
+  }
 }
 
 span {
   color: rgb(253, 45, 1);
 }
-
 
 p {
     width:50px;

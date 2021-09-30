@@ -1,5 +1,4 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
-const MaskData = require('maskdata');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
@@ -9,13 +8,14 @@ const schema = new passwordValidator();
 const fs = require('fs');
 
 //schema.is().min(5).has().uppercase().has().digits(1).has().not().spaces();
+schema.is().min(1);
 
-const emailMaskOptions = {
+/*const emailMaskOptions = {
   maskWith: "*", 
   unmaskedStartCharactersBeforeAt: 1,
   unmaskedEndCharactersAfterAt: 2,
   maskAtTheRate: false
-};
+};*/
 
 exports.createAdminAccount = (req, res, next) => {
   if(schema.validate(req.body.password)) {
@@ -24,7 +24,7 @@ exports.createAdminAccount = (req, res, next) => {
       User.create({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        email: MaskData.maskEmail2(req.body.email, emailMaskOptions),
+        email: /*MaskData.maskEmail2(*/req.body.email/*, emailMaskOptions)*/,
         password: hash,
         admin: true
       })
@@ -44,7 +44,7 @@ exports.signup = (req, res, next) => {
       User.create({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        email: MaskData.maskEmail2(req.body.email, emailMaskOptions),
+        email: /*MaskData.maskEmail2(*/req.body.email/*, emailMaskOptions)*/,
         password: hash
       })
       .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
