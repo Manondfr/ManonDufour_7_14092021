@@ -10,7 +10,7 @@ const Publication = sequelize.define('publication', {
   content: { type: Sequelize.TEXT, allowNull: false },
   image: {  type: Sequelize.STRING, allowNull:false },
   likes: { type: Sequelize.SMALLINT, allowNull: false, defaultValue: 0 },
-  usersLiked: { type: Sequelize.JSON, allowNull: true }
+  usersLiked: { type: Sequelize.STRING, allowNull: true }
 },
 {tableName: 'Publications', timestamps: true, underscored: true}
 );
@@ -18,7 +18,7 @@ const Publication = sequelize.define('publication', {
 User.hasMany(Publication, {foreignKey: 'user_id'}, {onDelete: 'CASCADE'});
 Publication.belongsTo(User, {foreignKey: 'user_id'});
 
-
+Publication.sync({alter:true});
 
 async() => {
   await Publication.sync({ alter: true });

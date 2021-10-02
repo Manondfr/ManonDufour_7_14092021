@@ -115,12 +115,16 @@ exports.login = (req, res, next) => {
   };
 
   exports.updateUserInfos = (req, res, next) => {
-    User.update({
+    const userObject = req.file ?
+    {
       gender: req.body.gender,
       birthday: req.body.birthday,
-      occupation: req.body.occupation,
-      about: req.body.about,
+      occupation: req.body.occupation, 
+      about: req.body.about,     
       profilePicture: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };
+    User.update({
+      ...userObject
     }, { where: { id: req.params.id }})
     .then(
       () => {
