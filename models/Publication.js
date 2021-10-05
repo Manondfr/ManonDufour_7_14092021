@@ -18,7 +18,7 @@ const Publication = sequelize.define('publication', {
 User.hasMany(Publication, {foreignKey: 'user_id'}, {onDelete: 'CASCADE'});
 Publication.belongsTo(User, {foreignKey: 'user_id'});
 
-Publication.sync({alter:true});
+
 
 async() => {
   await Publication.sync({ alter: true });

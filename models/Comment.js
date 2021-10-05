@@ -14,8 +14,12 @@ const Comment = sequelize.define('comment', {
 {tableName: 'Comments', timestamps: false}
 );
 
-User.hasOne(Comment, { foreignKey: 'user_id' }, {onDelete: 'CASCADE'});
-Publication.hasOne(Comment, { foreignKey: 'publication_id' }, {onDelete: 'CASCADE'});
+User.hasMany(Comment, { foreignKey: 'user_id' }, {onDelete: 'CASCADE'});
+Publication.hasMany(Comment, { foreignKey: 'publication_id' }, {onDelete: 'CASCADE'});
+Comment.belongsTo(User, {foreignKey: 'user_id'});
+//Comment.belongsTo(User, {foreignKey: 'publication_id'});
+
+Comment.sync({alter:true});
 
 async() => {
     await Comment.sync({ alter: true });

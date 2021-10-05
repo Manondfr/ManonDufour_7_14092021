@@ -1,10 +1,11 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
 const Comment = require('../models/Comment');
+const User = require('../models/User');
 
 exports.createComment = (req, res, next) => {   
     Comment.create ({
       user_id : req.body.userId,
-      publication_id : req.params.id,
+      publication_id : req.body.publicationId,
       commentContent: req.body.commentContent,
     })
       .then(
@@ -57,7 +58,10 @@ exports.createComment = (req, res, next) => {
 
 
   exports.getAllComments = (req, res, next) => {
-    Comment.findAll()
+    Comment.findAll({
+      include: [User],
+      attributes: [ 'id', 'commentContent', 'publication_id' ]
+    })
     .then(
         (comments) => {
             res.status(200).json(comments);

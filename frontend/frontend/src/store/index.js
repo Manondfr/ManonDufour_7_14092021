@@ -8,6 +8,7 @@ export default createStore({
     email: null,
     password: null,
     posts: [],
+    comments: [],
     selectedFile:null,
     content: null,
     userId: localStorage.getItem('userId'),
@@ -29,13 +30,20 @@ export default createStore({
     SET_POSTS(state, posts) {
       state.posts = posts
     },
+    SET_COMMENTS(state, comments) {
+      state.comments = comments
+    },
+    SET_LIKE(state, numberOfLikes) {
+      state.posts.likes = numberOfLikes
+      console.log(state.posts.likes)
+    },
     CHANGE_SELECTED_FILE(state, file) {
       state.selectedFile = file;
       console.log(state.selectedFile);
     },
     CHANGE_CONTENT(state, value) {
       state.content = value;
-    }
+    },
   },
   actions: {
     changePersonalInformations(context) {
@@ -50,12 +58,22 @@ export default createStore({
               commit('SET_POSTS', response.data)
     })
     },
+    getComments({ commit }, publicationId) {
+      const url = "http://localhost:3000/api/publications/" + publicationId + "/comments";
+      axios.get(url)
+          .then(response => {
+              commit('SET_COMMENTS', response.data)
+    })
+    },
     changeSelectedFile(context, file) {
       context.commit('CHANGE_SELECTED_FILE', file)
     },
     changeContent(context, value) {
       context.commit('CHANGE_CONTENT', value)
-    }
+    },
+    setLike(context, value) {
+      context.commit('SET_LIKE', value)
+    },
   },
   modules: {
   }

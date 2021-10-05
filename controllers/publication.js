@@ -2,6 +2,7 @@ const { Sequelize, Model, DataTypes, Op } = require("sequelize");
 const fs = require('fs');
 const Publication = require('../models/Publication');
 const User = require('../models/User');
+const Comment = require("../models/Comment");
 
 
 
@@ -98,11 +99,11 @@ exports.defineLikeStatus = (req, res, next) => {
   Publication.findOne({ where: { id: req.params.id } })
   .then(publication => {
     const listUsers = publication.usersLiked;
-    if(listUsers == null) {
+    if(listUsers == null || listUsers == "") {
       publication.update({usersLiked : req.body.userId})
       .then(publication.increment('likes', {by: 1} ))
       .then(
-        () => res.status(200).json({ message: 'Publication likée !' })
+        () => res.status(200).json({ likes:1 })
         )
       .catch(error => res.status(400).json({ error }));
     } else {
@@ -112,7 +113,7 @@ exports.defineLikeStatus = (req, res, next) => {
         publication.update({usersLiked : listUsers + ";" + req.body.userId })
         .then(publication.increment('likes', {by: 1} ))
         .then(
-          () => res.status(200).json({ message: 'Publication likée !' })
+          () => res.status(200).json({ likes:array.length + 1 })
           )
         .catch(error => res.status(400).json({ error }));
       } else {
@@ -121,57 +122,13 @@ exports.defineLikeStatus = (req, res, next) => {
         publication.update({usersLiked : updatedListUsers })
         .then(publication.decrement('likes', {by: 1} ))
         .then(
-          () => res.status(200).json({ message: 'Like de la publication annulé !' })
+          () => res.status(200).json({ likes:array.length })
           )
         .catch(error => res.status(400).json({ error }));
       }
     }
   })
-  .catch(error => res.status(404).json({ error }));
-  /*Publication.findOne({ where: { id: req.params.id } })
-  .then(publication => {
-    if(req.body.like == 1) {
-      const listUsers = publication.usersLiked;
-      if (listUsers == null) {
-        publication.update({usersLiked : req.body.userId })
-        .then(
-          () => res.status(200).json({ message: 'Publication likée !' })
-          )
-        .catch(error => res.status(400).json({ error }));
-      } else {
-        publication.update({usersLiked : listUsers + ";" + req.body.userId })
-        .then(
-          () => publication.increment('likes', {by: 1} )
-          .then(
-            () => res.status(200).json({ message: 'Publication likée' })
-            )
-          .catch(error => res.status(400).json({ error }))
-          )
-        .catch(error => res.status(400).json({ error }));
-      }
-    } else {
-      const listUsers = publication.usersLiked;
-      const array = listUsers.split(';');
-      array.splice(array.indexOf(array.find(user_id => user_id === req.body.userId)), 1);
-      const updatedListUsers = array.join(';');
-      publication.update({usersLiked : updatedListUsers })
-      .then(
-        () => publication.decrement('likes', {by: 1} )
-        .then(
-          () => res.status(200).json({ message: 'Like de la publication annulé !' })
-          )
-        .catch(error => res.status(400).json({ error }))
-      )
-      .catch(error => res.status(400).json({ error }));
-    }
-  })
-  .catch(
-    (error) => {
-      res.status(404).json({
-        error: error
-      })
-    }
-  )*/
+  .catch(error => res.status(404).json({ error }))
 };
 
 exports.getAllPublications = (req, res, next) => {
