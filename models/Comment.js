@@ -19,7 +19,6 @@ Publication.hasMany(Comment, { foreignKey: 'publication_id' }, {onDelete: 'CASCA
 Comment.belongsTo(User, {foreignKey: 'user_id'});
 //Comment.belongsTo(User, {foreignKey: 'publication_id'});
 
-Comment.sync({alter:true});
 
 async() => {
     await Comment.sync({ alter: true });

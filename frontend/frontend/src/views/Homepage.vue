@@ -12,7 +12,7 @@
   <div class="publiBox">
     <h2>Bonjour Manon ! Que souhaitez-vous partager aujourd'hui ?</h2>
     <form action="#" method="POST" id="publiForm">
-        <textarea rows="4" @change="onContentChange"></textarea>
+        <textarea rows="4" @input="onContentChange" @keyup.enter="postContent"></textarea>
     </form>
     <hr>
     <div class="imageBloc">
@@ -58,8 +58,28 @@
           </ul>
         </div>
 
-        <!-- Menu de mise à jour publication -->
-        <UpdateMenu idPost="post.id" contentPost="post.content" imagePost="post.image"></UpdateMenu>
+<!-- Menu de mise à jour publication -->
+<div class="updateMenu inactive" v-bind:data-id="post.id">
+  <div class="updateMenu__headers">
+    <h4>Mettre à jour la publication</h4>
+    <button @click="showUpdateMenu(post.id)">X</button>
+  </div>
+  <div class="tryFlex">
+    <div id="userProfilePicture">
+      <img v-bind:src="post.user.profilePicture"/>
+    </div>
+    <div class="trydate">
+      <h4>{{ post.user.first_name }} {{ post.user.last_name }}</h4>
+      <p>{{ formattingDate(post.date_col_formed) }}</p>
+    </div>
+  </div>
+  <textarea rows="4" v-bind:data-id="post.id" v-bind:value="post.content" @input="onContentChange"></textarea>
+  <img v-bind:src="post.image" v-bind:data-id="post.id"/>
+  <input type="file" id="inputUpdateFile" multiple = false @change="onFileChanged(post.id)">
+  <label for="inputUpdateFile" class="submissionBloc__p"><p>Modifier l'image <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
+  <img src="#" alt="">
+  <button @click="updatePublication(post.id, post.image)">Enregistrer les modifications</button>
+</div>
 
         <!-- Likes et section commentaires -->
         <CommentSection idPost="post.id" likesPost="post.likes">
@@ -81,7 +101,7 @@
             </div>
           </template>
           <template v-slot:textArea>
-            <textarea @keyup.enter="postComment(post.id)" rows="3" placeholder="Écrivez un commentaire..."></textarea>
+            <textarea id="postCommentTextArea" @keyup.enter="postComment(post.id)" rows="3" placeholder="Écrivez un commentaire..."></textarea>
           </template>
         </CommentSection>
       </div>
@@ -94,7 +114,6 @@
 <script>
 import HeaderContent from '../components/HeaderContent.vue'
 import PublicationsContent from '../components/PublicationsContent.vue'
-import UpdateMenu from '../components/UpdateMenu.vue'
 import CommentSection from '../components/CommentSection.vue'
 //import Vue from "vue"
 import store from '../store'
@@ -107,7 +126,6 @@ export default {
 	components: {
 		HeaderContent,
     PublicationsContent,
-    UpdateMenu,
     CommentSection
 	},
   methods: {
@@ -204,6 +222,7 @@ export default {
     .catch(function() {                
     alert("Une erreur est survenue lors de l'envoi des données");                
     });
+    document.querySelector('#postCommentTextArea').value = "";
   },
   addLike(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/like";
@@ -230,9 +249,11 @@ export default {
   let formattedDate = new Date(date).toLocaleString('fr-FR', options);
   return formattedDate[0].toUpperCase() + formattedDate.slice(1);
   },
-  onFileChanged(event) {
-    console.log(event.target.files[0]);
+  onFileChanged(dataId) {
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
+    let image = document.querySelector(`.updateMenu img[data-id="${dataId}"]`);
+    let imgSrc = URL.createObjectURL(event.target.files[0]);
+    image.setAttribute('src', imgSrc);
   },
   onContentChange(event) {
     console.log(event.target.value)
@@ -240,7 +261,11 @@ export default {
   },
   postContent() {
     const fd = new FormData;
-    fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
+    let image = document.querySelector('.imageBloc img');
+    console.log(image.src);
+    if(image.src !== "http://localhost:8080/") {
+      fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
+    }
     fd.append('content', store.state.content);
     fd.append('userId', localStorage.getItem('userId'));
     axios({
@@ -260,6 +285,8 @@ export default {
     .catch(function() {                
         alert("Une erreur est survenue lors de l'envoi des données")              
     })
+    document.querySelector('.publiBox textarea').value = "";
+    document.querySelector('.publiBox img').setAttribute("src", "");
   },
   showMenu(dataId) {
     let menu = document.querySelector(`.menu[data-id="${dataId}"]`);
@@ -270,7 +297,6 @@ export default {
      }
   },
   showUpdateMenu(dataId) {
-    this.showMenu(dataId);
     let updateMenu = document.querySelector(`.updateMenu[data-id="${dataId}"]`);
         if(updateMenu.classList.contains("active")) {
        updateMenu.classList.replace("active", "inactive")
@@ -295,14 +321,19 @@ export default {
     )
     .catch(error => console.log(error));
   },
- updatePublication(dataId) {
+ updatePublication(dataId, postImage) {
   this.showUpdateMenu(dataId);  
   this.showMenu(dataId);
   const url = "http://localhost:3000/api/publications/" + dataId;
   const authorization = "Bearer " + localStorage.getItem('token');
-  let textArea = document.querySelector(`.updateMenu textarea[data-id="${dataId}"]`);
   const fd = new FormData;
-  if(store.state.selectedFile !== null){
+  let textArea = document.querySelector(`.updateMenu textarea[data-id="${dataId}"]`);
+  let imageToUpdate = document.querySelector(`.pubBox[data-id="${dataId}"] img`);
+  console.log(postImage);
+  console.log(imageToUpdate.src);
+  console.log(store.state.selectedFile);
+  if(postImage == null && imageToUpdate.src !== ""){
+      console.log('yes');
       fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
   } 
   fd.append('content', textArea.value);
@@ -320,10 +351,12 @@ export default {
   );
   let pToUpdate = document.querySelector(`.pubBox[data-id="${dataId}"] #contentParagraph`);
   pToUpdate.innerHTML = textArea.value;
-  let imageToUpdate = document.querySelector(`.pubBox img[data-id="${dataId}"]`);
+  if(imageToUpdate.src !== "") {
+      let imageToUpdate = document.querySelector(`.pubBox img[data-id="${dataId}"]`);
   console.log(imageToUpdate);
   let newSource = URL.createObjectURL(store.state.selectedFile);
   imageToUpdate.setAttribute("src", newSource);
+  }
   }
   },
   computed: {
@@ -474,6 +507,18 @@ main p {
   max-height:600px;
   max-width:600px;
   width:60%;
+
+  & textarea {
+    width:80%;
+  }
+
+  & button {
+    height:35px;
+    border-radius: 25px;
+    background-color: #ffd7d7; 
+    border:transparent 1px solid;
+    font-weight: 600;
+  }
 }
 
 ul {
@@ -528,7 +573,7 @@ ul {
   }
 }
 
-#userProfilePicture {
+#userProfilePicture, .userProfilePicture {
   margin-left:10px;
   margin-top:10px;
   border-radius: 50%;
@@ -638,6 +683,15 @@ button {
     justify-content: space-between;
     margin-top:20px;
     width:60px;
+  }
+}
+
+.updateMenu__headers {
+  display:flex;
+  justify-content: space-between;
+
+  h4 {
+    align-self:center;
   }
 }
 

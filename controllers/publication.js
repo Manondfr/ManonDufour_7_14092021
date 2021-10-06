@@ -7,10 +7,17 @@ const Comment = require("../models/Comment");
 
 
 exports.createPublication = (req, res, next) => {   
-  Publication.create ({
+  const publicationObject = req.file ?
+  {
     user_id : req.body.userId,
     content: req.body.content,
     image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+  } : { 
+    user_id : req.body.userId,
+    content: req.body.content,
+   };
+  Publication.create ({
+    ...publicationObject
   })
     .then(
         () => {
@@ -28,6 +35,7 @@ exports.createPublication = (req, res, next) => {
     )
 }
 
+// voir si intéressant à utiliser
 exports.getOnePublication = (req, res, next) => {
   Publication.findOne({ where: { id: req.params.id }})
   .then(
@@ -47,16 +55,39 @@ exports.getOnePublication = (req, res, next) => {
 exports.updatePublication = (req, res, next) => {
   const publicationObject = req.file ?
   {
+    user_id : req.body.userId,
     content: req.body.content,
     image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  } : { ...req.body };
+  } : { 
+    user_id : req.body.userId,
+    content: req.body.content,
+   };
   Publication.findOne({ where: { id: req.params.id }})
   .then(publication => {
-    const filename = publication.image.split('/images/')[1];
-    fs.unlink(`images/${filename}`, () => {
-      publication.update({
-        ...publicationObject
-      }, { where: { id: req.params.id }})
+    if(publication.image) {
+      const filename = publication.image.split('/images/')[1];
+      fs.unlink(`images/${filename}`, () => {
+        publication.update({
+          ...publicationObject
+        }, { where: { id: req.params.id }})
+        .then(
+          () => {
+            res.status(200).json({
+              message: 'Publication mise à jour !'
+            });
+          }
+        )
+        .catch(
+          (error) => {
+            res.status(400).json({
+              error: error
+            });
+          }
+        )
+      }
+    )
+    } else {
+      publication.update({ ...publicationObject }, { where: { id:req.params.id } })
       .then(
         () => {
           res.status(200).json({
@@ -71,8 +102,7 @@ exports.updatePublication = (req, res, next) => {
           });
         }
       )
-    }
-  )})
+    }})
   .catch(
     (error) => {
       res.status(400).json({
@@ -85,12 +115,18 @@ exports.updatePublication = (req, res, next) => {
 exports.deletePublication = (req, res, next) => {
     Publication.findOne({ where: { id: req.params.id } })
       .then(publication => {
-        const filename = publication.image.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
+        if(publication.image) {
+          const filename = publication.image.split('/images/')[1];
+          fs.unlink(`images/${filename}`, () => {
+            publication.destroy({ where: { id: req.params.id }})
+              .then(() => res.status(200).json({ message: 'Publication supprimée !'}))
+              .catch(error => res.status(400).json({ error }));
+          });         
+        } else {
           publication.destroy({ where: { id: req.params.id }})
-            .then(() => res.status(200).json({ message: 'Publication supprimée !'}))
-            .catch(error => res.status(400).json({ error }));
-        });
+          .then(() => res.status(200).json({ message: 'Publication supprimée !'}))
+          .catch(error => res.status(400).json({ error }));         
+        }
       })
       .catch(error => res.status(500).json({ error }));
 };
