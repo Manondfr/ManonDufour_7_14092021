@@ -11,6 +11,10 @@ export default createStore({
     comments: [],
     selectedFile:null,
     content: null,
+    gender:null,
+    birthday:null,
+    about:null,
+    profilePicture:null,
     userId: localStorage.getItem('userId'),
     admin: localStorage.getItem('admin')
   },
@@ -29,6 +33,17 @@ export default createStore({
     },
     SET_POSTS(state, posts) {
       state.posts = posts
+    },
+    SET_POSTS_BY_USER(state, posts) {
+      state.posts = posts
+    },
+    SET_USER_INFOS(state, infos) {
+      state.lastName = infos.last_name;
+      state.firstName = infos.first_name;
+      state.gender = infos.gender;
+      state.birthday = infos.birthday;
+      state.about = infos.about;
+      state.profilePicture = infos.profilePicture;
     },
     SET_COMMENTS(state, comments) {
       state.comments = comments
@@ -56,6 +71,22 @@ export default createStore({
       axios.get('http://localhost:3000/api/publications')
           .then(response => {
               commit('SET_POSTS', response.data)
+    })
+    },
+    getPostsByUser({ commit }, userId) {
+      console.log(userId);
+      const url = "http://localhost:3000/api/auth/user/" + userId + "/publications/"
+      axios.get(url)
+          .then(response => {
+              commit('SET_POSTS_BY_USER', response.data)
+    })
+    },
+    getUserInfos({ commit }, userId) {
+      const url = "http://localhost:3000/api/auth/user/" + userId
+      axios.get(url)
+          .then(response => {
+              console.log(response.data);
+              commit('SET_USER_INFOS', response.data)
     })
     },
     getComments({ commit }, publicationId) {

@@ -1,29 +1,26 @@
 <template>
   <div>
-  <HeaderContent></HeaderContent>
-  <MainContent>
-    <h2>S'inscrire</h2>
-          <form action="#" method="POST" id="signupForm">
+    <HeaderContent></HeaderContent>
+    <LoginBox text="S'inscrire">
         <label for="firstName">Prénom</label><input id="firstName" placeholder="Prénom" pattern="[a-zA-ZÀ-ÿ- ]+" minlength="2" required aria-required="true"/>
         <label for="lastName">Nom</label><input id="lastName" placeholder="Nom" pattern="[a-zA-ZÀ-ÿ- ]+" minlength="2" required aria-required="true"/>
         <label for="email">Adresse email</label><input id="email" type="email" pattern="[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" placeholder="Email" required aria-required="true"/>
         <label for="password">Mot de passe</label><input id="password" type="password" placeholder="Mot de passe" min-length="5" required aria-required="true"/>
         <button @click.prevent="changePersonalInformations" type="submit">S'inscrire</button>
-      </form>
-  </MainContent>
+    </LoginBox>
   </div>
 </template>
 
 <script>
 const axios = require('axios').default;
 import HeaderContent from '../components/HeaderContent.vue'
-import MainContent from '../components/MainContent.vue'
+import LoginBox from '../components/LoginBox.vue'
 
 export default {
 	name: 'App',
 	components: {
 		HeaderContent,
-    MainContent
+    LoginBox
 	},
   methods: {
     changePersonalInformations() {
@@ -57,15 +54,4 @@ export default {
 </script>
 
 <style>
-.publiBox, .publications {
-    width:50%;
-    height: 100px;
-    margin:auto;
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-hr {
-  margin-top: 20px;
-}
-
 </style>

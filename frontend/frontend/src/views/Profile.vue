@@ -7,8 +7,19 @@
         </div>
         </HeaderContent>
 
+<div class="userInfos">
+  <div>
+  <img v-bind:src="$store.state.profilePicture"/>
+  </div>
+  <p>{{ $store.state.firstName}} {{ $store.state.lastName }}</p>
+  <p> {{ $store.state.gender }} </p>
+  <p> {{ $store.state.birthday }} </p>
+  <p>{{ $store.state.about }}</p>
+  <button>Modifier mes informations personnelles</button>
+</div>
+
  <div class="publications">
-    <h1>Publications à la une</h1>
+    <h1>Mes publications</h1>
     <div class="publications__box">
       <div class="pubBox" v-for='post in posts' :key='post.id' v-bind:data-id="post.id">  
         <PublicationsContent>
@@ -230,6 +241,8 @@ export default {
   onFileChanged(dataId) {
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
     let image = document.querySelector(`.updateMenu img[data-id="${dataId}"]`);
+    console.log(image);
+    console.log(event.target.files);
     let imgSrc = URL.createObjectURL(event.target.files[0]);
     image.setAttribute('src', imgSrc);
   },
@@ -355,10 +368,320 @@ export default {
     },
     },
     mounted() {
-        this.$store.dispatch('getPosts');
+        this.$store.dispatch('getUserInfos', window.location.href.slice(window.location.href.indexOf("e") + 2));
+        this.$store.dispatch('getPostsByUser', window.location.href.slice(window.location.href.indexOf("e") + 2));
         this.$store.dispatch("getComments")
     }
 }
 </script>
 
-<style></style>
+<style lang="scss">
+@mixin tabletstyle {
+    @media all and (min-width:483px){
+        @content;
+    }
+}
+
+@mixin desktopstyle {
+    @media all and (min-width:993px){
+        @content;
+    }
+}
+
+
+
+.publiBox, .publications {
+    width:50%;
+    min-width:310px;
+    margin:20px auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    
+}
+
+.publications {
+  width: 60%;
+  padding:15px;
+  background-color: rgba(255, 255, 255, 0.6) ;
+  border-top: rgba(128, 128, 128, 0.1) solid 1px;
+  //border-bottom: rgba(128, 128, 128, 0.1) solid 1px;
+  //box-shadow: 4px 0 3px -4px rgba(128, 128, 128, 0.2), -4px 0 3px -4px rgba(128, 128, 128, 0.2);
+
+  @include desktopstyle {
+    width:60%;
+  }
+}
+
+.pubBox {
+  //background-color:white;
+  position:relative;
+  width:90%;
+  margin:30px auto;
+  min-height:400px;
+  background-color: rgba(255, 255, 255, 0.8) ;
+  border-top: rgba(128, 128, 128, 0.1) solid 1.5px;
+  border-bottom: rgba(128, 128, 128, 0.1) solid 2px;
+  box-shadow: 8px 0 3px -4px rgba(128, 128, 128, 0.2), -8px 0 3px -4px rgba(128, 128, 128, 0.2);
+    @include desktopstyle {
+    width:80%;
+  }
+
+}
+
+hr {
+  margin-top: 20px;
+}
+
+.submissionBloc {
+  display:flex;
+  justify-content:space-between;
+}
+
+.submissionBloc__p {
+    width:50%;
+    margin-bottom: 15px;
+}
+
+svg {
+  fill: rgba(253, 45, 1, 1);
+  position:relative;
+  left: 10px;
+  top: 4px;
+}
+
+#inputFile, #inputUpdateFile {
+  display:none;
+}
+
+label {
+  cursor:pointer;
+}
+
+main p {
+  width:100%;
+  margin:0;
+}
+
+.updatePub {
+  fill: black;
+  cursor:pointer;
+
+  &:hover {
+    fill: rgba(253, 45, 1, 1);
+  }
+}
+
+.menu, .updateMenu {
+    &.inactive {
+    display:none;
+  }
+
+  &.active {
+    display:initial;
+  }
+}
+
+.updateMenu.active {
+
+  position:fixed;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top:0;
+  bottom: 0;
+  z-index:99;
+  background-color:white;
+  padding:30px;
+  max-height:600px;
+  max-width:600px;
+  width:60%;
+
+  & textarea {
+    width:80%;
+  }
+
+  & button {
+    height:35px;
+    border-radius: 25px;
+    background-color: #ffd7d7; 
+    border:transparent 1px solid;
+    font-weight: 600;
+  }
+}
+
+ul {
+  list-style-type: none;
+  line-height: 1.5em;
+  border: black solid 1px;
+  padding:10px;
+  width:250px;
+  margin:0;
+
+  & li {
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ffd7d7;
+    }
+  }
+}
+
+.likeSection {
+  padding:5px 0;
+  margin: 5px auto;
+  display:flex;
+  border-top: rgba(128, 128, 128, 0.8) solid 0.5px;
+  border-bottom: rgba(128, 128, 128, 0.8) solid 0.5px;
+  p {
+    cursor:pointer;
+
+    svg {
+      fill:black;
+      position:relative;
+      left:-10px;
+    }
+
+  }
+}
+
+
+.tryFlex {
+  display:flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  & h4 {
+    padding-top:0px;
+    padding-bottom:0;
+    margin:0;
+  }
+
+  & p:nth-child(2) {
+    font-size: 0.9rem;
+  }
+}
+
+#userProfilePicture, .userProfilePicture {
+  margin-left:10px;
+  margin-top:10px;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  overflow:hidden;
+  position:relative;
+
+  & img {
+    width:100%;
+  }
+}
+
+.trydate {
+  text-align:left;
+  margin-left:10px;
+}
+
+.tryflex2 {
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  margin-bottom:20px;
+
+  & #svgParagraph {
+    width:10px;
+    padding-right:40px;
+    text-align:right;
+  }
+}
+
+.menu{
+  position:absolute;
+  z-index:3;
+  background-color:white;
+  right:20px;
+  top:50px;
+}
+
+#contentParagraph {
+  text-align:left;
+  padding-left:20px;
+
+  & + img {
+    max-width:500px;
+    margin:10px 0;
+    text-align:left;
+
+    & + p {
+      text-align:left;
+      padding-left:20px;
+      margin-bottom:20px;
+
+      &:hover {
+        cursor:pointer;
+      }
+
+      & > svg {
+        position:relative;
+        left:-5px;
+        top:7px;
+        fill:blue;
+        padding:3px;
+      }
+    }
+  }
+}
+
+.imageBloc img, .updateMenu img {
+  max-width:500px;
+  margin:10px auto;
+}
+
+button {
+  background-color: transparent;
+  border:none;
+  cursor:pointer;
+  font-family:"Montserrat", sans-serif;
+  font-size:0.9rem;
+}
+
+.commentSection {
+  display:flex;
+  justify-content: flex-start;
+  margin:10px 30px;
+  
+
+  & .commentContentSection {
+    background-color:#f1f2f6;
+      padding:0 15px 5px 15px;
+      text-align:left;
+      border-radius:10%;
+
+      & h4 {
+        margin-bottom:3px;
+        margin-top:5px;
+        font-size:0.9rem;
+      }
+
+      & p {
+        font-size: 0.8rem;
+      }
+  }
+
+  & #updateCommentSection {
+    display:flex;
+    justify-content: space-between;
+    margin-top:20px;
+    width:60px;
+  }
+}
+
+.updateMenu__headers {
+  display:flex;
+  justify-content: space-between;
+
+  h4 {
+    align-self:center;
+  }
+}
+
+
+
+</style>

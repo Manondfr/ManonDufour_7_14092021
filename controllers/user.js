@@ -99,7 +99,10 @@ exports.login = (req, res, next) => {
   };
 
   exports.getPublicationsByUser = (req, res, next) => {
-    Publication.findAll({ where: { user_id: req.params.id }, order: [['created_at', 'DESC']] })
+    Publication.findAll({ where: { user_id: req.params.id }, order: [['created_at', 'DESC']], include: [User],   attributes: [
+      'id', 'content', 'image', 'user_id', 'usersLiked', 'likes',
+      [Sequelize.fn('date_format', Sequelize.col('created_at'), '%c-%e-%Y'), 'date_col_formed']
+  ] })
     .then(
       (publications) => {
           res.status(200).json(publications);

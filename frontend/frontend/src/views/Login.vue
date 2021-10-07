@@ -1,27 +1,24 @@
 <template>
   <div>
   <HeaderContent></HeaderContent>
-  <MainContent>
-      <h2>Se connecter</h2>
-      <form action="#" method="POST" id="loginForm">
+  <LoginBox text="Se connecter">
         <label for="email">Adresse email</label><input id="email" type="email" pattern="[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" placeholder="Email" required aria-required="true"/>
         <label for="password">Mot de passe</label><input id="password" type="password" placeholder="Mot de passe" min-length="5" required aria-required="true"/>
         <button @click.prevent="loginPersonalInformations" type="submit">Se connecter</button>
-      </form>
-    </MainContent>
+    </LoginBox>
   </div>
 </template>
 
 <script>
 const axios = require('axios').default;
 import HeaderContent from '../components/HeaderContent.vue'
-import MainContent from '../components/MainContent.vue'
+import LoginBox from '../components/LoginBox.vue'
 
 export default {
 	name: 'App',
 	components: {
 		HeaderContent,
-    MainContent
+    LoginBox
 	},
     methods: {
     loginPersonalInformations() {
@@ -56,6 +53,4 @@ export default {
 </script>
 
 <style>
-
-
 </style>

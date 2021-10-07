@@ -11,8 +11,8 @@ router.post('/signup', userCtrl.signup);
 router.post('/login', userCtrl.login);
 router.put('/user/:id', /*auth,*/ multer, userCtrl.updateUserInfos);
 router.delete('/user/:id', auth, userCtrl.deleteUser);
-router.get('/user/:id', auth, userCtrl.getOneUser);
-router.get('/user/:id/publications', auth, userCtrl.getPublicationsByUser);
+router.get('/user/:id', /*auth,*/ userCtrl.getOneUser);
+router.get('/user/:id/publications', /*auth,*/ userCtrl.getPublicationsByUser);
 
 
 module.exports = router;

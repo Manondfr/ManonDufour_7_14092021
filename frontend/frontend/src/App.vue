@@ -31,22 +31,6 @@ body {
   height:800px;
 }
 
-header {
-  width:100%;
-  padding:0;
-  margin:0;
-  box-shadow: 0 4px 2px -2px darken(rgba(255, 215, 215, 0.15), 80%);
-  //background-color: rgba(255, 215, 215, 0.15);
-  //background-color: rgba(0, 0, 0, 0.05);
-  height:80px;
-}
-
-header img {
-  height:80px;
-  width:200px;
-  opacity:0.7;
-}
-
 h1 {
   margin: 20px 10px 15px 10px;
   font-size:1rem;
@@ -64,58 +48,11 @@ h2 {
   }
 }
 
-.logBox {
-  width:80%;
-  max-width:500px;
-  padding:0 10px 10px 10px;
-  margin: 110px auto 30px auto;
-  border-radius:15px;
-  background-color: rgba(255, 255, 255, 0.8) ;
-  border-top: rgba(128, 128, 128, 0.1) solid 1.5px;
-  border-bottom: rgba(128, 128, 128, 0.1) solid 2px;
-  box-shadow: 8px 0 3px -4px rgba(128, 128, 128, 0.2), -8px 0 3px -4px rgba(128, 128, 128, 0.2);
-  @include desktopstyle {
-    width:500px;
-    height:340px;
-  }
-}
-
-form {
-  display:flex;
-  flex-direction: column;
-
-  & label {
-    font-size: 0.8rem;
-    display:none;
-  }
-
-  & input {
-    width:200px;
-    margin:8px auto;
-  }
-
-  & button {
-    width:110px;
-    height:35px;
-    border-radius: 25px;
-    margin:25px auto 10px auto;
-    background-color: #ffd7d7; 
-    border:transparent 1px solid;
-    font-weight: 600;
-  }
-
-  & ::-webkit-input-placeholder { text-align:center; }
-  ::-moz-placeholder { text-align:center; } /* firefox 19+ */
-  :-ms-input-placeholder { text-align:center; } /* ie */
-  input:-moz-placeholder { text-align:center; }
-}
-
 #app {
   font-family: "Montserrat", sans-serif;
   text-align: center;
   color: #2c3e50;
 }
-
 
 a {
   font-weight: 700;
@@ -130,14 +67,5 @@ a {
     position:relative;
     top:-5px;
   }
-}
-
-span {
-  color: rgb(253, 45, 1);
-}
-
-p {
-    width:50px;
-    margin:0 25px 0px 25px;
 }
 </style>
