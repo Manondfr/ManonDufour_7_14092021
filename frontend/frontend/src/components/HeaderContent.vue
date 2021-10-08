@@ -12,6 +12,19 @@ export default {
 </template>
 
 <style lang="scss">
+// Mixins
+@mixin tabletstyle {
+    @media all and (min-width:483px){
+        @content;
+    }
+}
+
+@mixin desktopstyle {
+    @media all and (min-width:993px){
+        @content;
+    }
+}
+
 header {    
     display:flex;
     flex-direction: row;
@@ -24,13 +37,24 @@ header {
     height:80px;
 
     & img {
-        height:80px;
-        width:200px;
+        width:120px;
+        @include desktopstyle() {
+            height:80px;
+            width:200px;
+        }
+
     }
 
     & p {
         width:50px;
         margin:0 25px 0px 25px;
+    }
+}
+
+header span, header svg {
+    display:none;
+    @include desktopstyle() {
+        display:initial;
     }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="routerDiv" id="app">
       <router-view/>
         <router-link v-if="$route.path == '/signup' || $route.path == '/login'" to="/signup">S'inscrire</router-link> <span v-if="$route.path == '/signup' || $route.path == '/login'">| </span> 
         <router-link v-if="$route.path == '/signup' || $route.path == '/login'" to="/login">Se connecter</router-link> 
@@ -34,6 +34,7 @@ body {
 h1 {
   margin: 20px 10px 15px 10px;
   font-size:1rem;
+  text-align: center;
   @include desktopstyle {
     font-size: 1.1rem;
     margin: 20px 40px 20px 40px;
@@ -43,6 +44,7 @@ h1 {
 h2 {
   font-size:0.8rem;
   font-weight:800;
+  text-align: center;
   @include desktopstyle {
     font-size: 1rem;
   }
@@ -50,13 +52,20 @@ h2 {
 
 #app {
   font-family: "Montserrat", sans-serif;
-  text-align: center;
   color: #2c3e50;
+}
+
+.routerDiv {
+  text-align:center;
 }
 
 a {
   font-weight: 700;
   color: #2c3e50;
+  font-size:0.9rem;
+  @include desktopstyle() {
+    font-size:1rem;
+  }
 
   &.router-link-exact-active {
     color: rgba(253, 45, 1, 0.9);

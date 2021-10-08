@@ -53,5 +53,26 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@mixin tabletstyle {
+    @media all and (min-width:483px){
+        @content;
+    }
+}
+
+@mixin desktopstyle {
+    @media all and (min-width:993px){
+        @content;
+    }
+}
+
+button {
+    font-family:"Montserrat", sans-serif;
+    font-size:0.8rem;
+    font-weight:bold;
+    @include desktopstyle() {
+      font-size:0.8rem;
+    }
+}
+
 </style>

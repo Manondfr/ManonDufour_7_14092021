@@ -24,6 +24,19 @@ export default {
 </template>
 
 <style lang="scss">
+// Mixins
+@mixin tabletstyle {
+    @media all and (min-width:483px){
+        @content;
+    }
+}
+
+@mixin desktopstyle {
+    @media all and (min-width:993px){
+        @content;
+    }
+}
+
 .submissionBox {
     width:50%;
     min-width:310px;
@@ -32,16 +45,37 @@ export default {
     
     &__publiDiv {
         display:flex;
-        justify-content:space-between;
+        justify-content:space-evenly;
         
         &Add {
-            width:50%;
+            text-align:center;
+            font-size:0.9rem;
+            width:40%;
             margin-bottom: 15px;
+            @include desktopstyle {
+                font-size:1rem;
+            }
+
+            & svg {
+                width:15px;
+                @include desktopstyle {
+                    width:auto;
+                }
+            }            
         }
     }
 }
 
 #submissionBox__textArea {
-  width:100%;
+  width:90%;
+  font-size:0.7rem;
+  font-family: "Montserrat", sans-serif;  
+  @include desktopstyle() {
+      font-size:0.9rem;
+  }
+}
+
+hr {
+  margin-top: 20px;
 }
 </style>

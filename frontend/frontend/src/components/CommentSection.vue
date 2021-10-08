@@ -12,7 +12,6 @@ export default {
 <div>
     <div class="likeSection">
         <slot name="addLike"></slot>
-        <p><svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 32C114.6 32 0 125.1 0 240c0 47.6 19.9 91.2 52.9 126.3C38 405.7 7 439.1 6.5 439.5c-6.6 7-8.4 17.2-4.6 26S14.4 480 24 480c61.5 0 110-25.7 139.1-46.3C192 442.8 223.2 448 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zm0 368c-26.7 0-53.1-4.1-78.4-12.1l-22.7-7.2-19.5 13.8c-14.3 10.1-33.9 21.4-57.5 29 7.3-12.1 14.4-25.7 19.9-40.2l10.6-28.1-20.6-21.8C69.7 314.1 48 282.2 48 240c0-88.2 93.3-160 208-160s208 71.8 208 160-93.3 160-208 160z"/></svg>Commenter</p>
     </div>
     <div>
         <slot name="commentArea"></slot>
@@ -23,6 +22,121 @@ export default {
 </div>
 </template>
 
-<style>
+<style lang="scss">
+// Mixins
+@mixin tabletstyle {
+    @media all and (min-width:483px){
+        @content;
+    }
+}
 
+@mixin desktopstyle {
+    @media all and (min-width:993px){
+        @content;
+    }
+}
+
+.likeSection {
+  padding:5px 0;
+  margin: 5px auto;
+  display:flex;
+  border-top: rgba(128, 128, 128, 0.8) solid 0.5px;
+  border-bottom: rgba(128, 128, 128, 0.8) solid 0.5px;
+
+    p {
+        cursor:pointer;
+        font-size:0.8rem;
+        @include desktopstyle() {
+            font-size:1rem;
+        }
+
+    svg {
+      fill:black;
+      position:relative;
+      left:-10px;
+      top:3px;
+      width:15px;
+      @include desktopstyle {
+            width:auto;
+      }
+    }
+
+  }
+}
+
+.commentSection {
+  display:flex;
+  justify-content: flex-start;
+  margin:10px 10px;
+  @include desktopstyle() {
+    margin:10px 30px;    
+  }
+  
+  & .commentContentSection {
+    background-color:#f1f2f6;
+      padding:0 15px 5px 15px;
+      text-align:left;
+      border-radius:5px;
+
+    & h4 {
+        margin-bottom:3px;
+        margin-top:5px;
+        font-size:0.7rem;
+        @include desktopstyle() {
+          font-size:0.9rem;
+        }
+    }
+
+    & p {
+        font-size: 0.7rem;
+        text-align:left;
+          @include desktopstyle() {
+            font-size:0.8rem;
+          }
+    }
+
+    & svg {
+
+        height:10px;
+        fill: rgba(0,0,0,0.3);
+        cursor: pointer;
+        position:relative;
+        top:5px;
+        padding-left:3px;
+        @include desktopstyle() {
+            width:auto;
+            height:auto;
+            padding-left:8px;
+        }
+
+        &:hover {
+        fill:black;
+        }
+    }
+
+    & textarea {
+        width:95%;
+        border-radius:5px;
+        border:none;
+        font-size:0.7rem;
+        font-family:"Montserrat", sans-serif;
+        padding:5px 0 0 5px;  
+        @include desktopstyle() {
+        margin:10px 30px;
+        padding:3px;
+        font-size: 0.8rem;
+    }        
+    }
+  }
+}
+
+.commentContentSection__headers {
+    display:flex;
+    justify-content:space-between;
+
+    & .commentContentSection__headers__icons {
+        display:flex;
+        padding-left:20px;
+    }
+}
 </style>
