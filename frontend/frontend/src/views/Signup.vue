@@ -43,7 +43,7 @@ export default {
       if (res.ok) {
           return res.json();
           }
-      window.location.href = "http://localhost:8080/#/homepage"
+      alert("Félicitations, votre compte a bien été créé ! Vous pouvez désormais vous connecter à votre compte")
       })
       .catch(function() {                
           alert("Une erreur est survenue lors de l'envoi des données");                

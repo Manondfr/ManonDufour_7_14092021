@@ -6,7 +6,7 @@ export default {
 
 <template>
 	<header>
-        <p><img src="../assets/icon-left-font-monochrome-black.svg" alt="Logo Groupomania"></p>  
+        <p><a href="http://localhost:8080/#/homepage"><img src="../assets/icon-left-font-monochrome-black.svg" alt="Logo Groupomania"></a></p>  
         <slot></slot>      
     </header>
 </template>

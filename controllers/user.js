@@ -125,7 +125,12 @@ exports.login = (req, res, next) => {
       occupation: req.body.occupation, 
       about: req.body.about,     
       profilePicture: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
+    } : { 
+      gender: req.body.gender,
+      birthday: req.body.birthday,
+      occupation: req.body.occupation, 
+      about: req.body.about,     
+     };
     User.update({
       ...userObject
     }, { where: { id: req.params.id }})
@@ -148,17 +153,12 @@ exports.login = (req, res, next) => {
   exports.deleteUser = (req, res, next) => {
     User.findOne({ where: { id: req.params.id } })
     .then(user => {
-      if(user.profilePicture) {
         const filename = user.profilePicture.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {
           user.destroy({ where: { id: req.params.id }})
           .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
           .catch(error => res.status(400).json({ error }));
-        })
-      } 
-      user.destroy({ where: { id: req.params.id }})
-      .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
-      .catch(error => res.status(400).json({ error }));      
+        })  
     })
     .catch(error => res.status(404).json({ error }));
   };

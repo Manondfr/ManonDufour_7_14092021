@@ -14,6 +14,7 @@
   </div>
   <h1>{{ $store.state.firstName}} {{ $store.state.lastName }}</h1>
   <p> {{ $store.state.gender }} </p>
+  <p> {{ $store.state.occupation }} </p>
   <p> {{ $store.state.birthday }} </p>
   <p>{{ $store.state.about }}</p>
   <button @click="showUpdateInfosMenu" id="updateInfosButton">Modifier mes informations personnelles</button>
@@ -35,28 +36,29 @@
                 <h2>Mettre à jour les informations utilisateurs</h2>
                 <button class="closeButton" @click="showUpdateInfosMenu">X</button>
               </div>
-              <form>
-                <div class="inputDiv>">
-                <label for="gender">Genre</label><input id="gender"/>
-                </div>
-                <div class="inputDiv>">
-                <label for="birthday">Date de naissance</label><input id="birthday"/>
-                </div>
-                <div class="inputDiv>">
-                <label for="occupation">Poste</label><input id="occupation"/>
-                </div>
-                <div class="inputDiv>">
-                <label for="about">A propos</label><input id="about"/>
-                </div>
-              </form>
-                              <div class="userProfilePicture" id="generalUserProfilePicture">
+                                            <div class="userProfilePicture" id="generalUserProfilePicture">
               <img v-bind:src="$store.state.profilePicture"/>
                             </div>
-              <input type="file" id="inputUpdateFile" multiple = false @change="onProfilePictureChanged()">
-              <label for="inputUpdateFile" class="submissionBox__publiDivAdd"><p>Modifier ma photo de profil <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
+              <input type="file" id="inputUpdateProfilePicture" multiple = false @change="onProfilePictureChanged">
+              <label for="inputUpdateProfilePicture" class="submissionBox__publiDivAdd"><p>Modifier ma photo de profil <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
+              <form>
+                <div class="inputDiv>">
+                <label for="gender">Genre</label><input v-bind:value="$store.state.gender" id="gender"/>
+                </div>
+                <div class="inputDiv>">
+                <label for="birthday">Date de naissance</label><input v-bind:value="$store.state.birthday" id="birthday"/>
+                </div>
+                <div class="inputDiv>">
+                <label for="occupation">Poste</label><input v-bind:value="$store.state.occupation" id="occupation"/>
+                </div>
+                <div class="inputDiv>">
+                <label for="about">A propos</label><input v-bind:value="$store.state.about" id="about"/>
+                </div>
+              </form>
 
-              <button>Enregistrer les modifications</button>
-              <button id="deleteAccountButton">Supprimer mon compte</button>
+
+              <button @click="saveNewInfos">Enregistrer les modifications</button>
+              <button @click="deleteAccount" id="deleteAccountButton">Supprimer mon compte</button>
             </div>
 
 
@@ -71,6 +73,7 @@
               </template>
               <template v-slot:slotForContent>
                 <p class="publicationsContent__contentParagraph">{{ post.content }}</p>
+                <img v-bind:data-id="post.id" v-bind:src="post.image"/>
               </template>
             </PublicationsContent>
 
@@ -120,8 +123,9 @@
                   <textarea class="publicationsContent__contentParagraph" rows="4" v-bind:data-id="post.id" v-bind:value="post.content" @input="onContentChange"></textarea>
                 </template>
               </PublicationsContent>
-              <input type="file" id="inputUpdateFile" multiple = false @change="onFileChanged(post.id)">
-              <label for="inputUpdateFile" class="submissionBox__publiDivAdd"><p>Modifier l'image <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
+              <img v-bind:data-id="post.id" v-bind:src="post.image"/>
+              <input type="file"  class="inputUpdateFile" v-bind:id="'inputUpdateFile' + post.id"  multiple = false @change="onFileChanged(post.id)">
+              <label v-bind:for="'inputUpdateFile' + post.id" class="submissionBox__publiDivAdd"><p>Modifier l'image <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
               <img id="updateImage" v-bind:data-id="post.id" src="#" alt="">
               <button @click="updatePublication(post.id, post.image)">Enregistrer les modifications</button>
             </div>
@@ -136,7 +140,6 @@ import HeaderContent from '../components/HeaderContent.vue'
 import PublicationsContent from '../components/PublicationsContent.vue'
 import CommentSection from '../components/CommentSection.vue'
 import PostSubmission from '../components/PostSubmission.vue'
-//import Vue from "vue"
 import store from '../store'
 const axios = require('axios').default;
 
@@ -156,11 +159,21 @@ export default {
     let imgSrc = URL.createObjectURL(event.target.files[0]);
     image.setAttribute('src', imgSrc);
   },
+    onProfilePictureChanged() {
+    document.querySelector(".updateInfosMenu .userProfilePicture img").remove();
+    let image = document.createElement('img');
+    document.querySelector(".updateInfosMenu .userProfilePicture").appendChild(image);
+    image.setAttribute('src', URL.createObjectURL(event.target.files[0]));
+    this.$store.dispatch('changeProfilePicture', event.target.files[0]);
+  },
   visitProfile(userId) {
     window.location.href = "http://localhost:8080/#/profile/" + userId;
   },
   inputAutofocus(dataId) {
     document.querySelector(`#postCommentTextArea[data-id="${dataId}"]`).focus();
+  },
+  changeInfos(input) {
+        this.$store.dispatch('changeInfos', event.target.value, input);
   },
   fetchComments(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
@@ -206,6 +219,23 @@ export default {
     let comment = document.querySelector(`.commentContentSection p[data-id="${commentId}"]`);
     comment.innerHTML = `<textarea @keyup.enter="updateCommentContent(post.id, comment.id)" v-if="comment.publication_id == post.id " v-bind:data-id="comment.id">${comment.textContent}</textarea>`;
   },
+  deleteAccount() {
+    const url = "http://localhost:3000/api/auth/user/" + localStorage.getItem("userId");
+    console.log(url);
+    axios({
+      method: 'delete',
+      url: url,
+    })
+    .then(function(res) {
+    if (res.ok) {
+    return res.json();
+    }
+    window.location.href="http://localhost:8080/#/signup";
+    })
+    .catch(function() {                
+    alert("Une erreur est survenue lors de la suppression des données");                
+    });
+  },
   deleteComment(dataId, commentId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments/" + commentId;
     const commentToDelete = document.querySelector(`.commentSection[data-id="${commentId}"]`);
@@ -250,6 +280,39 @@ export default {
     });
     document.querySelector('#postCommentTextArea').value = "";
   },
+            saveNewInfos() {
+            const url = "http://localhost:3000/api/auth/user/" + window.location.href.slice(window.location.href.indexOf("e") + 2);
+            const authorization = "Bearer " + localStorage.getItem('token');
+            const fd = new FormData;
+            if(store.state.profilePicture instanceof Blob) {
+              fd.append('profilePicture', store.state.profilePicture, store.state.profilePicture.name);                                      
+              document.querySelector(".userProfilePicture img").remove();
+              let image = document.createElement('img');
+              document.querySelector(".userProfilePicture").appendChild(image);
+              image.setAttribute('src', URL.createObjectURL(store.state.profilePicture));
+            }
+            fd.append('gender', document.querySelector("#gender").value);
+            fd.append('birthday', document.querySelector("#birthday").value);
+            fd.append('occupation', document.querySelector("#occupation").value);
+            fd.append('about', document.querySelector("#about").value);
+            axios({
+            method: 'put',
+            headers: {
+            'Authorization' : authorization
+            },
+            url: url,
+            data: fd
+            })
+            .then(
+            () => { console.log('ok') }
+            );
+            document.querySelector(".userInfos p").textContent = document.querySelector("#gender").value;
+            document.querySelector(".userInfos p:nth-child(4)").textContent = document.querySelector("#occupation").value;
+            document.querySelector(".userInfos p:nth-child(5)").textContent = document.querySelector("#birthday").value;
+            document.querySelector(".userInfos p:nth-child(6)").textContent = document.querySelector("#about").value;
+
+            this.showUpdateInfosMenu()
+            },
   addLike(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/like";
     axios({
@@ -282,19 +345,9 @@ export default {
   },
   onFileChanged(dataId) {
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
-    console.log(document.querySelector("#updateImage"));
-    let image = document.querySelector(`#updateImage[data-id="${dataId}"]`);
-    console.log(image);
+    let image = document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`);
     let imgSrc = URL.createObjectURL(event.target.files[0]);
     image.setAttribute('src', imgSrc);
-  },
-    onProfilePictureChanged() {
-    this.$store.dispatch('changeProfilePicture', event.target.files[0]);
-    console.log(document.querySelector("#updateImage"));
-    /*let image = document.querySelector(`#updateImage[data-id="${dataId}"]`);
-    console.log(image);
-    let imgSrc = URL.createObjectURL(event.target.files[0]);
-    image.setAttribute('src', imgSrc);*/
   },
   onContentChange(event) {
     console.log(event.target.value)
@@ -371,19 +424,12 @@ export default {
     .catch(error => console.log(error));
   },
  updatePublication(dataId, postImage) {
-  this.showUpdateMenu(dataId);  
-  this.showMenu(dataId);
   const url = "http://localhost:3000/api/publications/" + dataId;
   const authorization = "Bearer " + localStorage.getItem('token');
   const fd = new FormData;
   let textArea = document.querySelector(`.updateMenu textarea[data-id="${dataId}"]`);
-    console.log(textArea)
   let imageToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] img[data-id="${dataId}"]`);
-  console.log(postImage);
-  console.log(imageToUpdate.src);
-  console.log(store.state.selectedFile);
   if(postImage == null && imageToUpdate.src !== ""){
-      console.log('yes');
       fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
   } 
   fd.append('content', textArea.value);
@@ -400,11 +446,9 @@ export default {
     () => { console.log('ok') }
   );
   let pToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] .publicationsContent__contentParagraph`);
-  console.log(pToUpdate);
   pToUpdate.innerHTML = textArea.value;
   if(imageToUpdate.src !== "") {
       let imageToUpdate = document.querySelector(`.publications__each img[data-id="${dataId}"]`);
-  console.log(imageToUpdate);
   let newSource = URL.createObjectURL(store.state.selectedFile);
   imageToUpdate.setAttribute("src", newSource);
   }
@@ -479,7 +523,7 @@ main p {
   top: 4px;
 }
 
-#inputFile, #inputUpdateFile {
+#inputFile, .inputUpdateFile, #inputUpdateProfilePicture {
   display:none;
 }
 

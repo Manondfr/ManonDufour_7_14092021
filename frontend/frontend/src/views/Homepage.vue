@@ -4,7 +4,7 @@
       <div id="mainMenu">
         <router-link class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'" to="/homepage"><svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg>
         </router-link>
-        <router-link class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'" to="/profile"><span><img v-bind:src="$store.state.profilePicture"/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM212 140v116h-70.9c-10.7 0-16.1 13-8.5 20.5l114.9 114.3c4.7 4.7 12.2 4.7 16.9 0l114.9-114.3c7.6-7.6 2.2-20.5-8.5-20.5H300V140c0-6.6-5.4-12-12-12h-64c-6.6 0-12 5.4-12 12z"/></svg></span></router-link>
+        <router-link class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'" v-bind:to="'/profile/' + $store.state.userId"><span><img v-bind:src="$store.state.profilePicture"/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM212 140v116h-70.9c-10.7 0-16.1 13-8.5 20.5l114.9 114.3c4.7 4.7 12.2 4.7 16.9 0l114.9-114.3c7.6-7.6 2.2-20.5-8.5-20.5H300V140c0-6.6-5.4-12-12-12h-64c-6.6 0-12 5.4-12 12z"/></svg></span></router-link>
       </div>
     </HeaderContent>
 
@@ -33,6 +33,7 @@
               </template>
               <template v-slot:slotForContent>
                 <p class="publicationsContent__contentParagraph">{{ post.content }}</p>
+                <img v-bind:data-id="post.id" v-bind:src="post.image"/>
               </template>
             </PublicationsContent>
 
@@ -82,9 +83,9 @@
                   <textarea class="publicationsContent__contentParagraph" rows="4" v-bind:data-id="post.id" v-bind:value="post.content" @input="onContentChange"></textarea>
                 </template>
               </PublicationsContent>
-              <input type="file" id="inputUpdateFile" multiple = false @change="onFileChanged(post.id)">
-              <label for="inputUpdateFile" class="submissionBox__publiDivAdd"><p>Modifier l'image <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
-              <img id="updateImage" v-bind:data-id="post.id" src="#" alt="">
+              <img v-bind:data-id="post.id" v-bind:src="post.image"/>
+              <input v-bind:data-id="post.id" type="file" class="inputUpdateFile" v-bind:id="'inputUpdateFile' + post.id" multiple = false @change="onFileChanged(post.id)">
+              <label v-bind:data-id="post.id" v-bind:for="'inputUpdateFile' + post.id" class="submissionBox__publiDivAdd"><p>Modifier l'image<svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
               <button @click="updatePublication(post.id, post.image)">Enregistrer les modifications</button>
             </div>
           </div>
@@ -246,9 +247,7 @@ export default {
   },
   onFileChanged(dataId) {
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
-    console.log(document.querySelector("#updateImage"));
-    let image = document.querySelector(`#updateImage[data-id="${dataId}"]`);
-    console.log(image);
+    let image = document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`);
     let imgSrc = URL.createObjectURL(event.target.files[0]);
     image.setAttribute('src', imgSrc);
   },
@@ -318,22 +317,17 @@ export default {
     )
     .catch(error => console.log(error));
   },
- updatePublication(dataId, postImage) {
+ updatePublication(dataId) {
   this.showUpdateMenu(dataId);  
   this.showMenu(dataId);
   const url = "http://localhost:3000/api/publications/" + dataId;
   const authorization = "Bearer " + localStorage.getItem('token');
   const fd = new FormData;
   let textArea = document.querySelector(`.updateMenu textarea[data-id="${dataId}"]`);
-    console.log(textArea)
   let imageToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] img[data-id="${dataId}"]`);
-  console.log(postImage);
-  console.log(imageToUpdate.src);
-  console.log(store.state.selectedFile);
-  if(postImage == null && imageToUpdate.src !== ""){
-      console.log('yes');
+  //if(postImage == null && imageToUpdate.src !== ""){
       fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
-  } 
+  //} 
   fd.append('content', textArea.value);
   fd.append('userId', localStorage.getItem('userId'));
   axios({
@@ -348,13 +342,10 @@ export default {
     () => { console.log('ok') }
   );
   let pToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] .publicationsContent__contentParagraph`);
-  console.log(pToUpdate);
   pToUpdate.innerHTML = textArea.value;
   if(imageToUpdate.src !== "") {
-      let imageToUpdate = document.querySelector(`.publications__each img[data-id="${dataId}"]`);
-  console.log(imageToUpdate);
-  let newSource = URL.createObjectURL(store.state.selectedFile);
-  imageToUpdate.setAttribute("src", newSource);
+      let newSource = URL.createObjectURL(store.state.selectedFile);
+      imageToUpdate.setAttribute("src", newSource);
   }
   }
   },
@@ -432,7 +423,7 @@ main p {
   top: 4px;
 }
 
-#inputFile, #inputUpdateFile {
+#inputFile, .inputUpdateFile {
   display:none;
 }
 

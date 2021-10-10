@@ -13,6 +13,7 @@ export default createStore({
     content: null,
     gender:null,
     birthday:null,
+    occupation:null,
     about:null,
     profilePicture:null,
     userId: localStorage.getItem('userId'),
@@ -41,6 +42,7 @@ export default createStore({
       state.lastName = infos.last_name;
       state.firstName = infos.first_name;
       state.gender = infos.gender;
+      state.occupation = infos.occupation;
       state.birthday = infos.birthday;
       state.about = infos.about;
       state.profilePicture = infos.profilePicture;
