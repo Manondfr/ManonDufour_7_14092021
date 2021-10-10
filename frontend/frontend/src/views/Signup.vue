@@ -75,4 +75,11 @@ button {
     }
 }
 
+body {
+  margin:0;
+  padding:0;
+  background: url("../assets/icon.png") no-repeat top center fixed; 
+  background-size: 800px;
+  height:800px;
+}
 </style>

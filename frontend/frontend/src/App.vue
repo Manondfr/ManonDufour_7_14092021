@@ -23,14 +23,6 @@
     }
 }
 
-body {
-  margin:0;
-  padding:0;
-  background: url("./assets/icon.png") no-repeat top center fixed; 
-  background-size: 800px;
-  height:800px;
-}
-
 h1 {
   margin: 20px 10px 15px 10px;
   font-size:1rem;
@@ -46,7 +38,7 @@ h2 {
   font-weight:800;
   text-align: center;
   @include desktopstyle {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 }
 

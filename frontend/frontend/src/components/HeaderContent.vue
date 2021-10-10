@@ -31,6 +31,7 @@ header {
     justify-content: space-between;
     align-items: center;
     width:100%;
+      //background: radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
     padding:0;
     margin:0;
     box-shadow: 0 4px 2px -2px darken(rgba(255, 215, 215, 0.15), 80%);

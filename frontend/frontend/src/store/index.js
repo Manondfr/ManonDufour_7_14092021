@@ -56,6 +56,10 @@ export default createStore({
       state.selectedFile = file;
       console.log(state.selectedFile);
     },
+    CHANGE_PROFILE_PICTURE(state, file) {
+      state.profilePicture = file;
+    },
+
     CHANGE_CONTENT(state, value) {
       state.content = value;
     },
@@ -98,6 +102,9 @@ export default createStore({
     },
     changeSelectedFile(context, file) {
       context.commit('CHANGE_SELECTED_FILE', file)
+    },
+    changeProfilePicture(context, file) {
+      context.commit('CHANGE_PROFILE_PICTURE', file)
     },
     changeContent(context, value) {
       context.commit('CHANGE_CONTENT', value)

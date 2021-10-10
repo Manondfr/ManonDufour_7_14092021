@@ -7,19 +7,17 @@
         </div>
         </HeaderContent>
 
+<main>
 <div class="userInfos">
-  <div class="userProfilePicture">
+  <div class="userProfilePicture" id="generalUserProfilePicture">
     <img v-bind:src="$store.state.profilePicture"/>
   </div>
-  <p>{{ $store.state.firstName}} {{ $store.state.lastName }}</p>
+  <h1>{{ $store.state.firstName}} {{ $store.state.lastName }}</h1>
   <p> {{ $store.state.gender }} </p>
   <p> {{ $store.state.birthday }} </p>
   <p>{{ $store.state.about }}</p>
-  <button>Modifier mes informations personnelles</button>
-</div>
-
-      <!-- Partie soumission d'un post -->
-      <PostSubmission v-bind:userName="$store.state.firstName">
+  <button @click="showUpdateInfosMenu" id="updateInfosButton">Modifier mes informations personnelles</button>
+        <PostSubmission id="profilePostSubmission" v-bind:userName="$store.state.firstName">
         <template v-slot:submissionBox__textArea>
           <textarea id="submissionBox__textArea" rows="4" @input="onContentChange" @keyup.enter="postContent"></textarea>
         </template>
@@ -29,6 +27,38 @@
           <button @click="postContent" class="submissionBox__publiDivAdd">Publier <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 512 512"><path d="M440 6.5L24 246.4c-34.4 19.9-31.1 70.8 5.7 85.9L144 379.6V464c0 46.4 59.2 65.5 86.6 28.6l43.8-59.1 111.9 46.2c5.9 2.4 12.1 3.6 18.3 3.6 8.2 0 16.3-2.1 23.6-6.2 12.8-7.2 21.6-20 23.9-34.5l59.4-387.2c6.1-40.1-36.9-68.8-71.5-48.9zM192 464v-64.6l36.6 15.1L192 464zm212.6-28.7l-153.8-63.5L391 169.5c10.7-15.5-9.5-33.5-23.7-21.2L155.8 332.6 48 288 464 48l-59.4 387.3z"/></svg></button>
         </template>
       </PostSubmission>
+</div>
+
+      <!-- Menu de mise à jour des informations personnelles -->
+                  <div class="updateInfosMenu inactive">
+              <div class="updateMenu__headers">
+                <h2>Mettre à jour les informations utilisateurs</h2>
+                <button class="closeButton" @click="showUpdateInfosMenu">X</button>
+              </div>
+              <form>
+                <div class="inputDiv>">
+                <label for="gender">Genre</label><input id="gender"/>
+                </div>
+                <div class="inputDiv>">
+                <label for="birthday">Date de naissance</label><input id="birthday"/>
+                </div>
+                <div class="inputDiv>">
+                <label for="occupation">Poste</label><input id="occupation"/>
+                </div>
+                <div class="inputDiv>">
+                <label for="about">A propos</label><input id="about"/>
+                </div>
+              </form>
+                              <div class="userProfilePicture" id="generalUserProfilePicture">
+              <img v-bind:src="$store.state.profilePicture"/>
+                            </div>
+              <input type="file" id="inputUpdateFile" multiple = false @change="onProfilePictureChanged()">
+              <label for="inputUpdateFile" class="submissionBox__publiDivAdd"><p>Modifier ma photo de profil <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
+
+              <button>Enregistrer les modifications</button>
+              <button id="deleteAccountButton">Supprimer mon compte</button>
+            </div>
+
 
  <div class="publications">
     <h1>Publications</h1>
@@ -96,7 +126,8 @@
               <button @click="updatePublication(post.id, post.image)">Enregistrer les modifications</button>
             </div>
           </div>
-  </div>       
+  </div>  
+  </main>     
     </div>
 </template>
 
@@ -110,20 +141,26 @@ import store from '../store'
 const axios = require('axios').default;
 
 export default {
-    name: 'App',
+  name: 'App',
 	components: {
-        HeaderContent,
-        PublicationsContent,
-        CommentSection,
-        PostSubmission
+		HeaderContent,
+    PublicationsContent,
+    CommentSection,
+    PostSubmission
 	},
-    methods: {
-         onFileSelected(event) {
+  methods: {
+  onFileSelected(event) {
     console.log(event.target.files[0]);
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
-    let image = document.querySelector('.imageBloc img');
+    let image = document.querySelector('.submissionBox__imageBloc img');
     let imgSrc = URL.createObjectURL(event.target.files[0]);
     image.setAttribute('src', imgSrc);
+  },
+  visitProfile(userId) {
+    window.location.href = "http://localhost:8080/#/profile/" + userId;
+  },
+  inputAutofocus(dataId) {
+    document.querySelector(`#postCommentTextArea[data-id="${dataId}"]`).focus();
   },
   fetchComments(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
@@ -227,7 +264,12 @@ export default {
     if (res.ok) {
         return res.json();
         }
-    document.querySelector('#pLike').innerHTML = `<svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>${res.data.likes}`;
+    document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).innerHTML = `<svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>${res.data.likes}`;
+    if(res.data.likes == 0) {
+      document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).style.display = "none"
+    } else {
+      document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).style.display = "inherit"
+    }
     })
     .catch(function() {                
         alert("Une erreur est survenue lors de l'envoi des données");                
@@ -240,11 +282,19 @@ export default {
   },
   onFileChanged(dataId) {
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
-    let image = document.querySelector(`.updateMenu img[data-id="${dataId}"]`);
+    console.log(document.querySelector("#updateImage"));
+    let image = document.querySelector(`#updateImage[data-id="${dataId}"]`);
     console.log(image);
-    console.log(event.target.files);
     let imgSrc = URL.createObjectURL(event.target.files[0]);
     image.setAttribute('src', imgSrc);
+  },
+    onProfilePictureChanged() {
+    this.$store.dispatch('changeProfilePicture', event.target.files[0]);
+    console.log(document.querySelector("#updateImage"));
+    /*let image = document.querySelector(`#updateImage[data-id="${dataId}"]`);
+    console.log(image);
+    let imgSrc = URL.createObjectURL(event.target.files[0]);
+    image.setAttribute('src', imgSrc);*/
   },
   onContentChange(event) {
     console.log(event.target.value)
@@ -252,7 +302,7 @@ export default {
   },
   postContent() {
     const fd = new FormData;
-    let image = document.querySelector('.imageBloc img');
+    let image = document.querySelector('.submissionBox__imageBloc img');
     console.log(image.src);
     if(image.src !== "http://localhost:8080/") {
       fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
@@ -276,11 +326,19 @@ export default {
     .catch(function() {                
         alert("Une erreur est survenue lors de l'envoi des données")              
     })
-    document.querySelector('.publiBox textarea').value = "";
-    document.querySelector('.publiBox img').setAttribute("src", "");
+    document.querySelector('.submissionBox textarea').value = "";
+    document.querySelector('.submissionBox img').setAttribute("src", "");
   },
   showMenu(dataId) {
     let menu = document.querySelector(`.menu[data-id="${dataId}"]`);
+    if(menu.classList.contains("active")) {
+       menu.classList.replace("active", "inactive")
+     } else {
+       menu.classList.replace("inactive", "active")
+     }
+  },
+    showUpdateInfosMenu() {
+    let menu = document.querySelector(`.updateInfosMenu`);
     if(menu.classList.contains("active")) {
        menu.classList.replace("active", "inactive")
      } else {
@@ -297,7 +355,7 @@ export default {
   },
   deletePublication(dataId) {
     this.showMenu(dataId);
-    let divToDelete = document.querySelector(`.pubBox[data-id="${dataId}"]`);
+    let divToDelete = document.querySelector(`.publications__each[data-id="${dataId}"]`);
     const url = "http://localhost:3000/api/publications/" + dataId;
     const authorization = "Bearer " + localStorage.getItem('token');
     axios({
@@ -319,7 +377,8 @@ export default {
   const authorization = "Bearer " + localStorage.getItem('token');
   const fd = new FormData;
   let textArea = document.querySelector(`.updateMenu textarea[data-id="${dataId}"]`);
-  let imageToUpdate = document.querySelector(`.pubBox[data-id="${dataId}"] img`);
+    console.log(textArea)
+  let imageToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] img[data-id="${dataId}"]`);
   console.log(postImage);
   console.log(imageToUpdate.src);
   console.log(store.state.selectedFile);
@@ -340,18 +399,19 @@ export default {
   .then(
     () => { console.log('ok') }
   );
-  let pToUpdate = document.querySelector(`.pubBox[data-id="${dataId}"] #contentParagraph`);
+  let pToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] .publicationsContent__contentParagraph`);
+  console.log(pToUpdate);
   pToUpdate.innerHTML = textArea.value;
   if(imageToUpdate.src !== "") {
-      let imageToUpdate = document.querySelector(`.pubBox img[data-id="${dataId}"]`);
+      let imageToUpdate = document.querySelector(`.publications__each img[data-id="${dataId}"]`);
   console.log(imageToUpdate);
   let newSource = URL.createObjectURL(store.state.selectedFile);
   imageToUpdate.setAttribute("src", newSource);
   }
   }
-    },
-    computed: {
-            posts() {
+  },
+  computed: {
+    posts() {
       return this.$store.state.posts
     },
     comments() {
@@ -366,12 +426,12 @@ export default {
     adminStatus() {
       return this.$store.state.admin
     },
-    },
-    mounted() {
-        this.$store.dispatch('getUserInfos', window.location.href.slice(window.location.href.indexOf("e") + 2));
-        this.$store.dispatch('getPostsByUser', window.location.href.slice(window.location.href.indexOf("e") + 2));
-        this.$store.dispatch("getComments")
-    }
+  },
+  mounted() {
+    this.$store.dispatch('getUserInfos', localStorage.getItem('userId'));
+    this.$store.dispatch('getPosts');
+    this.$store.dispatch("getComments");
+  },
 }
 </script>
 
@@ -389,7 +449,7 @@ export default {
 }
 
 main {
-  background-color:rgba(255,255,255, 0.7);
+  background-color:rgba(255,255,255, 0.9);
 }
 
 main p {
@@ -483,7 +543,7 @@ h1 {
   }
 }
 
-.menu, .updateMenu {
+.menu, .updateMenu, .updateInfosMenu {
     &.inactive {
     display:none;
   }
@@ -526,12 +586,12 @@ ul {
   display:none;
 }
 
-.updateMenu.active {
+.updateMenu.active, .updateInfosMenu.active {
   position:fixed;
   margin: auto;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: 120px;
   z-index:99;
   background-color:white;
   padding:10px 30px;
@@ -559,10 +619,11 @@ ul {
     margin-top:0;
   }
 
-  & .userProfilePicture img {
+  /*& .userProfilePicture img {
       margin:0;
-  }
+  }*/
 }
+
 
 .displayFlex {
   display:flex;
@@ -597,6 +658,8 @@ ul {
 
   & img {
     width:100%;
+    text-align:center;
+
   }
 }
 
@@ -640,5 +703,63 @@ button {
       font-size:0.8rem;
     }
   }
+}
+
+.userInfos {
+  margin:20px auto;
+  text-align:center;
+width:98%;
+  padding:20px 0;
+        border: rgba(128, 128, 128, 0.1) solid 0.5px;
+  box-shadow: 1px 2px 10px rgba(128, 128, 128, 0.2);
+    background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
+
+    & h1 {
+      margin-top:10px;
+    }
+}
+
+#updateInfosButton {
+    height:35px;
+    border-radius: 25px;
+    border:transparent 1px solid;
+    font-weight: 600;
+    margin-top:25px;  
+    margin-bottom:40px;
+        background-color: #ffd7d7; 
+}
+
+#generalUserProfilePicture {
+  width:120px;
+  height:120px;
+  margin:auto;
+}
+
+#profilePostSubmission {
+  box-shadow:none;
+  border:none;
+}
+
+#deleteAccountButton {
+  background-color:darken(rgb(253, 45, 1), 15%);
+  color:white;
+}
+
+form {
+  display:flex;
+  flex-direction:column;
+
+    & input {
+    width:200px;
+    margin:8px auto;
+  }
+
+  & label {
+        font-size: 0.8rem;
+  }
+}
+
+.inputDiv {
+  display:flex;
 }
 </style>
