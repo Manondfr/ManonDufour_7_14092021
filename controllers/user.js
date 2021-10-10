@@ -7,6 +7,7 @@ const passwordValidator = require('password-validator');
 const schema = new passwordValidator();
 const fs = require('fs');
 
+
 //schema.is().min(5).has().uppercase().has().digits(1).has().not().spaces();
 schema.is().min(1);
 
@@ -56,6 +57,25 @@ exports.signup = (req, res, next) => {
   }
 };
 
+exports.signout = (req, res, next) => {
+  if(schema.validate(req.body.password)) {
+    bcrypt.hash(req.body.password, 10)
+    .then(hash => {
+      User.create({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: /*MaskData.maskEmail2(*/req.body.email/*, emailMaskOptions)*/,
+        password: hash
+      })
+      .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+      .catch(error => res.status(400).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }))
+  } else if(!schema.validate(req.body.password)) {
+    return res.status(400).json({ error });
+  }
+};
+
 exports.login = (req, res, next) => {
   User.findOne({ where: {email: req.body.email} })
     .then(user => {
@@ -67,6 +87,7 @@ exports.login = (req, res, next) => {
           if (!valid) {
             return res.status(401).json({ error });
           }
+          res.cookie(`Cookie`,jwt.sign({ userId:user.id }, 'RANDOM_TOKEN_SECRET'),{ maxAge: 86400 * 1000, httpOnly: true });
           res.status(200).json({
             userId: user.id,
             admin: user.admin,
@@ -74,7 +95,8 @@ exports.login = (req, res, next) => {
               { userId: user.id },
               'RANDOM_TOKEN_SECRET',
               { expiresIn: '24h' }
-            )
+            ),
+            cookie: req.cookies
           });
         })
         .catch(error => res.status(500).json({ error }));
@@ -83,6 +105,7 @@ exports.login = (req, res, next) => {
   };
 
   exports.getOneUser = (req, res, next) => {
+    console.log(req.cookies.Cookie);
     User.findOne({ where: { id: req.params.id }})
     .then(
         (user) => {

@@ -5,6 +5,10 @@ const path = require('path');
 const userRoutes = require('./routes/user');
 const publicationRoutes= require('./routes/publication');
 const commentRoutes= require('./routes/comment');
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

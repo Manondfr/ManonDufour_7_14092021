@@ -168,7 +168,7 @@ exports.defineLikeStatus = (req, res, next) => {
 };
 
 exports.getAllPublications = (req, res, next) => {
-    Publication.findAll({ order: [['created_at', 'DESC']], include: [User],   attributes: [
+  Publication.findAll({ order: [['created_at', 'DESC']], include: [User],   attributes: [
       'id', 'content', 'image', 'user_id', 'usersLiked', 'likes',
       [Sequelize.fn('date_format', Sequelize.col('created_at'), '%c-%e-%Y'), 'date_col_formed']
   ] })
