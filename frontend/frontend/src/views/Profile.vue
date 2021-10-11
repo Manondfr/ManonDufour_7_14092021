@@ -1,11 +1,21 @@
 <template>
     <div>
-        <HeaderContent>
-        <div>
-            <router-link class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'" to="/homepage">Accueil</router-link>
-            <router-link class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'" to="/profile">Profil</router-link>
+    <HeaderContent>
+      <nav id="mainMenu">
+        <router-link aria-label="Accès page d'accueil" class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'" to="/homepage"><svg width="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg></router-link>
+        <button role="button" tabindex="1" aria-controls="headerMenu" aria-expanded="false" aria-label="Menu déroulant au clic - Accès profil ou déconnexion" @click="showHeaderMenu" class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'"><p class="profileAccess"><img v-bind:src="$store.state.profilePicture"/><span>Manon</span></p></button>       
+        
+        <!-- Au clic sur la div ci-dessus, apparition du menu de navigation -->
+        <div class="headerMenu inactive" id="headerMenu">
+          <ul>
+            <li><router-link v-bind:to="'/profile/' + $store.state.userId">Voir le profil</router-link></li>
+            <li>Se déconnecter</li>
+          </ul>
         </div>
-        </HeaderContent>
+        <!-- Fin du menu de navigation -->
+
+      </nav>
+    </HeaderContent>
 
 <main>
 <div class="userInfos">
@@ -17,7 +27,7 @@
   <p> {{ $store.state.occupation }} </p>
   <p> {{ $store.state.birthday }} </p>
   <p>{{ $store.state.about }}</p>
-  <button @click="showUpdateInfosMenu" id="updateInfosButton">Modifier mes informations personnelles</button>
+  <button v-if="$route.path == '/profile' + $store.state.userId" @click="showUpdateInfosMenu" id="updateInfosButton">Modifier mes informations personnelles</button>
         <PostSubmission id="profilePostSubmission" v-bind:userName="$store.state.firstName">
         <template v-slot:submissionBox__textArea>
           <textarea id="submissionBox__textArea" rows="4" @input="onContentChange" @keyup.enter="postContent"></textarea>
@@ -42,23 +52,24 @@
               <input type="file" id="inputUpdateProfilePicture" multiple = false @change="onProfilePictureChanged">
               <label for="inputUpdateProfilePicture" class="submissionBox__publiDivAdd"><p>Modifier ma photo de profil <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
               <form>
-                <div class="inputDiv>">
+
                 <label for="gender">Genre</label><input v-bind:value="$store.state.gender" id="gender"/>
-                </div>
-                <div class="inputDiv>">
+
+
                 <label for="birthday">Date de naissance</label><input v-bind:value="$store.state.birthday" id="birthday"/>
-                </div>
-                <div class="inputDiv>">
+
+
                 <label for="occupation">Poste</label><input v-bind:value="$store.state.occupation" id="occupation"/>
-                </div>
-                <div class="inputDiv>">
-                <label for="about">A propos</label><input v-bind:value="$store.state.about" id="about"/>
-                </div>
+ 
+
+                <label for="about">A propos</label><textarea v-bind:value="$store.state.about" id="about"></textarea>
+
               </form>
 
-
+              <div id="updateButtons">
               <button @click="saveNewInfos">Enregistrer les modifications</button>
               <button @click="deleteAccount" id="deleteAccountButton">Supprimer mon compte</button>
+              </div>
             </div>
 
 
@@ -75,11 +86,7 @@
                 <p class="publicationsContent__contentParagraph">{{ post.content }}</p>
                 <img v-bind:data-id="post.id" v-bind:src="post.image"/>
               </template>
-            </PublicationsContent>
-
-            <!-- Likes et section commentaires -->
-            <CommentSection>
-              <template v-slot:addLike>
+                            <template v-slot:addLike>
                 <p @click="addLike(post.id)"><svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M466.27 286.69C475.04 271.84 480 256 480 236.85c0-44.015-37.218-85.58-85.82-85.58H357.7c4.92-12.81 8.85-28.13 8.85-46.54C366.55 31.936 328.86 0 271.28 0c-61.607 0-58.093 94.933-71.76 108.6-22.747 22.747-49.615 66.447-68.76 83.4H32c-17.673 0-32 14.327-32 32v240c0 17.673 14.327 32 32 32h64c14.893 0 27.408-10.174 30.978-23.95 44.509 1.001 75.06 39.94 177.802 39.94 7.22 0 15.22.01 22.22.01 77.117 0 111.986-39.423 112.94-95.33 13.319-18.425 20.299-43.122 17.34-66.99 9.854-18.452 13.664-40.343 8.99-62.99zm-61.75 53.83c12.56 21.13 1.26 49.41-13.94 57.57 7.7 48.78-17.608 65.9-53.12 65.9h-37.82c-71.639 0-118.029-37.82-171.64-37.82V240h10.92c28.36 0 67.98-70.89 94.54-97.46 28.36-28.36 18.91-75.63 37.82-94.54 47.27 0 47.27 32.98 47.27 56.73 0 39.17-28.36 56.72-28.36 94.54h103.99c21.11 0 37.73 18.91 37.82 37.82.09 18.9-12.82 37.81-22.27 37.81 13.489 14.555 16.371 45.236-5.21 65.62zM88 432c0 13.255-10.745 24-24 24s-24-10.745-24-24 10.745-24 24-24 24 10.745 24 24z"/></svg>J'aime</p>
                 <p @click="inputAutofocus(post.id)"><svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 32C114.6 32 0 125.1 0 240c0 47.6 19.9 91.2 52.9 126.3C38 405.7 7 439.1 6.5 439.5c-6.6 7-8.4 17.2-4.6 26S14.4 480 24 480c61.5 0 110-25.7 139.1-46.3C192 442.8 223.2 448 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zm0 368c-26.7 0-53.1-4.1-78.4-12.1l-22.7-7.2-19.5 13.8c-14.3 10.1-33.9 21.4-57.5 29 7.3-12.1 14.4-25.7 19.9-40.2l10.6-28.1-20.6-21.8C69.7 314.1 48 282.2 48 240c0-88.2 93.3-160 208-160s208 71.8 208 160-93.3 160-208 160z"/></svg>Commenter</p>
               </template>
@@ -102,7 +109,9 @@
               <template v-slot:textArea>
                 <textarea id="postCommentTextArea" v-bind:data-id="post.id" @keyup.enter="postComment(post.id)" rows="3" placeholder="Écrivez un commentaire..."></textarea>
               </template>
-            </CommentSection>
+            </PublicationsContent>
+
+
 
             <!-- On clic : Menu modification/suppression -->
             <div class="menu inactive" v-bind:data-id="post.id">
@@ -138,7 +147,6 @@
 <script>
 import HeaderContent from '../components/HeaderContent.vue'
 import PublicationsContent from '../components/PublicationsContent.vue'
-import CommentSection from '../components/CommentSection.vue'
 import PostSubmission from '../components/PostSubmission.vue'
 import store from '../store'
 const axios = require('axios').default;
@@ -148,7 +156,6 @@ export default {
 	components: {
 		HeaderContent,
     PublicationsContent,
-    CommentSection,
     PostSubmission
 	},
   methods: {
@@ -390,6 +397,14 @@ export default {
        menu.classList.replace("inactive", "active")
      }
   },
+      showHeaderMenu() {
+    let menu = document.querySelector(`.headerMenu`);
+    if(menu.classList.contains("active")) {
+       menu.classList.replace("active", "inactive")
+     } else {
+       menu.classList.replace("inactive", "active")
+     }
+  },
     showUpdateInfosMenu() {
     let menu = document.querySelector(`.updateInfosMenu`);
     if(menu.classList.contains("active")) {
@@ -587,13 +602,52 @@ h1 {
   }
 }
 
-.menu, .updateMenu, .updateInfosMenu {
+.menu, .updateMenu, .updateInfosMenu, .headerMenu {
     &.inactive {
     display:none;
   }
 
   &.active {
     display:initial;
+  }
+}
+
+.headerMenu {
+  position:absolute;
+  z-index:99;
+  top:75px;
+  right:35px;
+  cursor:pointer;
+
+  & ul {
+                    border: rgba(128, 128, 128, 0.1) solid 0.5px;
+  box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
+    background:radial-gradient(circle, rgba(254,251,251,1) 0%, rgba(254,251,251,1) 100%);
+    border-radius:3px;
+  }
+
+  & ul, a {
+    width:200px;
+    font-size:0.8rem;
+    line-height:1.2rem;
+    text-decoration:none;
+    font-weight:normal;
+    color:black
+  }
+}
+
+.updateInfosMenu {
+  height:100%;
+  @include desktopstyle() {
+    height:auto;
+  }
+
+  & p {
+      margin-bottom:10px;
+  }
+
+  & h2 {
+    margin-bottom:30px;
   }
 }
 
@@ -626,7 +680,7 @@ ul {
   align-items:center;
 }
 
-.updateMenu #numberOfLikes {
+.updateMenu #numberOfLikes, .updateMenu #commentAndLikesSection {
   display:none;
 }
 
@@ -635,13 +689,16 @@ ul {
   margin: auto;
   left: 0;
   right: 0;
-  top: 120px;
+  top: 0px;
   z-index:99;
   background-color:white;
   padding:10px 30px;
   max-width:600px;
   min-height:500px;
   width:80%;
+  @include desktopstyle() {
+    top:70px;
+  }
 
   & textarea {
     width:90%;
@@ -761,6 +818,13 @@ width:98%;
     & h1 {
       margin-top:10px;
     }
+
+    & p:nth-child(1), p:nth-child(4), p:nth-child(5), p:nth-child(6) {
+      font-size: 0.8rem;
+      @include desktopstyle() {
+        font-size: 1rem;
+      }
+    }
 }
 
 #updateInfosButton {
@@ -796,14 +860,40 @@ form {
     & input {
     width:200px;
     margin:8px auto;
+        font-family:"Montserrat", sans-serif;
   }
 
   & label {
         font-size: 0.8rem;
+        margin-top:10px;
+  }
+
+  & #about {
+    max-width:400px;
+    height:75px;
+    margin:auto;
+    font-family:"Montserrat", sans-serif;
+    margin:8px auto;
+  }
+
+}
+
+#updateButtons {
+  display:flex;
+  flex-direction: column;
+  width:40%;
+  min-width:220px;
+  margin:auto;
+  justify-content: space-between;
+  
+
+  & button {
+    font-size:0.8rem;
+    @include desktopstyle() {
+      font-size:0.9rem;
+    }
   }
 }
 
-.inputDiv {
-  display:flex;
-}
+
 </style>

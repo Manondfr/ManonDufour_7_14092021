@@ -67,6 +67,7 @@ a {
     padding-right:25px;
     position:relative;
     top:-5px;
+    text-decoration: none;
   }
 }
 </style>

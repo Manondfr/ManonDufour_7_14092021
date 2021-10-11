@@ -6,7 +6,7 @@ export default {
 
 <template>
 	<header>
-        <p><a href="http://localhost:8080/#/homepage"><img src="../assets/icon-left-font-monochrome-black.svg" alt="Logo Groupomania"></a></p>  
+        <p><a href="http://localhost:8080/#/homepage"><img src="../assets/icon-left-font-monochrome-black.svg" alt="Logo Groupomania - Groupe de grande distribution"></a></p>  
         <slot></slot>      
     </header>
 </template>
@@ -24,6 +24,8 @@ export default {
         @content;
     }
 }
+
+
 
 header {    
     display:flex;
@@ -46,16 +48,65 @@ header {
 
     }
 
+    & img[alt="Logo Groupomania"] {
+    clip-path: inset(0 80% 0 0);
+    width:180px;
+    position:relative;
+    top:2px;
+    @include desktopstyle() {
+        clip-path:none;
+    }
+}
+
     & p {
         width:50px;
         margin:0 25px 0px 25px;
     }
+
+    & svg:nth-child(1) {
+        margin:0;
+        padding:0;
+        position:relative;
+        left:40px;
+        top:7px;
+                  border: rgba(128, 128, 128, 0.1) solid 0.5px;
+  box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
+    background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
+    padding:5px;
+    border-radius:50%;
+    width:25px;
+    @include desktopstyle() {
+                left:30px;
+                width:auto;
+    }
+    }
 }
 
-header span, header svg {
-    display:none;
+header svg {
+    //display:none;
     @include desktopstyle() {
-        display:initial;
+        //display:initial;
+    }
+}
+
+header .profileAccess {
+    display:flex;
+    border: grey solid 1px;
+    width:100px;
+    border-radius:20px;
+    font-size:0.8rem;
+    align-items:center;
+    padding:3px 5px 3px 3px;
+          border: rgba(128, 128, 128, 0.1) solid 0.5px;
+  box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
+    background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
+    font-weight:bold;
+    cursor:pointer;
+    
+
+    & span {
+        padding-left:10px;
+
     }
 }
 </style>
