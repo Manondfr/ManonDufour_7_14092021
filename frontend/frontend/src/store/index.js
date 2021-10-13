@@ -115,6 +115,4 @@ export default createStore({
       context.commit('SET_LIKE', value)
     },
   },
-  modules: {
-  }
 })

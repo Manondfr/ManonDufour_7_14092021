@@ -11,10 +11,8 @@ export default {
   <main>
     <div class="logBox">
       <h1>Bienvenue sur l'espace d'échange <span>Groupomania</span> !</h1>
-      <h2>{{ text }}</h2>
-      <form action="#" method="POST">
-        <slot></slot>
-      </form>
+      <h2>{{ text }}</h2>      
+        <slot></slot>      
     </div>
   </main>
 </template>

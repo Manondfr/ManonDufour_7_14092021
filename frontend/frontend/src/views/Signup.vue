@@ -2,11 +2,13 @@
   <div>
     <HeaderContent></HeaderContent>
     <LoginBox text="S'inscrire">
-      <label for="firstName">Prénom</label><input id="firstName" placeholder="Prénom" pattern="[a-zA-ZÀ-ÿ- ]+" minlength="2" required aria-required="true"/>
-      <label for="lastName">Nom</label><input id="lastName" placeholder="Nom" pattern="[a-zA-ZÀ-ÿ- ]+" minlength="2" required aria-required="true"/>
-      <label for="email">Adresse email</label><input id="email" type="email" pattern="[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" placeholder="Email" required aria-required="true"/>
-      <label for="password">Mot de passe</label><input id="password" type="password" placeholder="Mot de passe" min-length="5" required aria-required="true"/>
-      <button @click.prevent="changePersonalInformations" type="submit">S'inscrire</button>
+      <form aria-label="Formulaire de création de compte" action="#" method="POST">
+        <label for="firstName">Prénom</label><input id="firstName" placeholder="Prénom" pattern="[a-zA-ZÀ-ÿ- ]+" minlength="2" required aria-required="true"/>
+        <label for="lastName">Nom</label><input id="lastName" placeholder="Nom" pattern="[a-zA-ZÀ-ÿ- ]+" minlength="2" required aria-required="true"/>
+        <label for="email">Adresse email</label><input id="email" type="email" pattern="[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" placeholder="Email" required aria-required="true"/>
+        <label for="password">Mot de passe</label><input id="password" type="password" placeholder="Mot de passe" min-length="5" required aria-required="true"/>
+        <button @click.prevent="signUp" type="submit">S'inscrire</button>
+      </form>
     </LoginBox>
   </div>
 </template>
@@ -23,8 +25,8 @@ export default {
     LoginBox
 	},
   methods: {
-  changePersonalInformations() {
-    for(let input of document.querySelectorAll("form input")){
+  signUp() {
+    for(let input of document.querySelectorAll("form")){
       if(input.reportValidity() === false) {
         break;
       } else {

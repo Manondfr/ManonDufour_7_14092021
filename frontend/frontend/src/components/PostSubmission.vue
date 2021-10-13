@@ -95,4 +95,28 @@ export default {
 hr {
   margin-top: 20px;
 }
+
+// Partie soumission d'une publication
+.submissionBox__publiDivAdd svg {
+  fill: rgba(253, 45, 1, 1);
+  position:relative;
+  left: 10px;
+  top: 4px;
+}
+
+#inputFile, .inputUpdateFile, #inputUpdateProfilePicture {
+  display:none;
+}
+
+label {
+  cursor:pointer;
+}
+
+button {
+  background-color: transparent;
+  border:none;
+  cursor:pointer;
+  font-family:"Montserrat", sans-serif;
+  font-size:0.9rem;
+}
 </style>

@@ -2,9 +2,11 @@
   <div>
   <HeaderContent></HeaderContent>
     <LoginBox text="Se connecter">
-      <label for="email">Adresse email</label><input id="email" type="email" pattern="[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" placeholder="Email" required aria-required="true"/>
-      <label for="password">Mot de passe</label><input id="password" type="password" placeholder="Mot de passe" min-length="5" required aria-required="true"/>
-      <button @click.prevent="loginPersonalInformations" type="submit">Se connecter</button>
+      <form aria-label="Formulaire de création de compte" action="#" method="POST">
+        <label for="email">Adresse email</label><input id="email" type="email" pattern="[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" placeholder="Email" required aria-required="true"/>
+        <label for="password">Mot de passe</label><input id="password" type="password" placeholder="Mot de passe" min-length="5" required aria-required="true"/>
+        <button @click.prevent="login" type="submit">Se connecter</button>
+      </form>
     </LoginBox>
   </div>
 </template>
@@ -21,7 +23,7 @@ export default {
     LoginBox
 	},
   methods: {
-  loginPersonalInformations() {
+  login() {
     this.$store.dispatch('loginPersonalInformations');
     let body = {
         "email": this.$store.state.email,
@@ -50,7 +52,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 body {
   margin:0;
   padding:0;

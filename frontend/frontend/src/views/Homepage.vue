@@ -1,19 +1,6 @@
 <template>
   <div>   
-    <HeaderContent role="banner">
-      <nav id="mainMenu">
-        <router-link aria-label="Accès page d'accueil" class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'" to="/homepage"><svg width="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg></router-link>
-        <div role="button" tabindex="0" aria-controls="headerMenu" aria-expanded="false" aria-label="Menu déroulant au clic - Accès profil ou déconnexion" @click="showHeaderMenu" class="homepage" v-if="$route.path !== '/signup' || $route.path !== '/login'"><p class="profileAccess"><img v-bind:src="$store.state.profilePicture"/><span>Manon</span></p></div>       
-        
-        <!-- Au clic sur la div ci-dessus, apparition du menu de navigation -->
-        <div class="headerMenu inactive" id="headerMenu">
-          <ul>
-            <li><router-link v-bind:to="'/profile/' + $store.state.userId">Voir le profil</router-link></li>
-            <li>Se déconnecter</li>
-          </ul>
-        </div>
-        <!-- Fin du menu de navigation -->
-      </nav>
+    <HeaderContent @showHeaderMenu="showHeaderMenu" role="banner" v-bind:condition="$route.path !== '/signup' || $route.path !== '/login'" v-bind:name="$store.state.firstName" v-bind:profilePicture="$store.state.profilePicture" v-bind:userId="$store.state.userId">
     </HeaderContent>
 
     <main>
@@ -21,34 +8,43 @@
       <PostSubmission role="region" v-bind:userName="$store.state.firstName" @changeContent="onContentChange" @postContent="postContent" @selectFile="onFileSelected"></PostSubmission>
 
       <!-- Partie publications à la une -->        
-        <div role="region" class="publications">
+        <section class="publications">
           <h1>Publications à la une</h1>
-          <div class="publications__each" v-for='post in posts' :key='post.id' v-bind:data-id="post.id">  
+          <article class="publications__each" v-for='post in posts' :key='post.id' v-bind:data-id="post.id">  
 
             <!-- Corps de la publication -->
-            <PublicationsContent @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || adminStatus == true" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content"></PublicationsContent>
+            <PublicationsContent  @deletePublication="deletePublication(post.id)" v-bind:imageAppearance="post.image !== null" @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || adminStatus == true" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content">
+                <!-- On clic : Menu modification/suppression -->
+                <template v-slot:updateDeleteMenu>
+                  <UpdateDeleteMenu v-bind:postId="post.id" @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)"></UpdateDeleteMenu>
+                  <!-- On clic sur Modifier la publication : Menu de mise à jour publication -->
+                  <UpdatePublication v-bind:postId="post.id" v-bind:postImage="post.image" @showUpdateMenu="showUpdateMenu(post.id)" @changeFile="onFileChanged(post.id)" @updatePublication="updatePublication(post.id, post.image)">
+                    <template v-slot:publicationsContent>
+                      <PublicationsContent v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postContent="post.content" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes">
+                        <template v-slot:slotForContent>
+                          <label class="sr-only" v-bind:for="'publicationsContent__contentParagraph'+post.id">Zone de modification du contenu de la publication</label>
+                          <textarea class="publicationsContent__contentParagraph" v-bind:id="'publicationsContent__contentParagraph'+post.id" rows="4" v-bind:data-id="post.id" v-bind:value="post.content" @input="onContentChange"></textarea>
+                        </template>
+                      </PublicationsContent>
+                    </template>
+                  </UpdatePublication>
+                  <!-- Fin du menu de modification de la publication -->
+                </template>
+                <!-- Fin du menu de modification et suppression -->
+                <template v-slot:slotForContent>
+                      <p class="publicationsContent__contentParagraph">{{ post.content }}</p>
+                </template>
+            </PublicationsContent>
             <div v-for='comment in comments' :key='comment.id'>
               <Comment @updateCommentContent="updateCommentContent(post.id, comment.id)" @deleteComment="deleteComment(post.id, comment.id)" @updateComment="updateComment(comment.id)" @visitProfile="visitProfile(comment.user.id)" v-bind:commentContent="comment.commentContent" v-bind:userLastName="comment.user.last_name" v-bind:userFirstName="comment.user.first_name" v-bind:commentId="comment.id" v-bind:condition="comment.publication_id == post.id" v-bind:contentCreator="fetchUserId == post.user_id || adminStatus == true"></Comment>           
             </div>
-            <textarea id="postCommentTextArea" v-bind:data-id="post.id" @keyup.enter="postComment(post.id)" rows="3" placeholder="Écrivez un commentaire..."></textarea>
-               
-
-            <!-- On clic : Menu modification/suppression -->
-           <UpdateDeleteMenu v-bind:postId="post.id" @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)"></UpdateDeleteMenu>
-
-
-            <!-- On clic : Menu de mise à jour publication -->
-            <UpdatePublication v-bind:postId="post.id" v-bind:postImage="post.image" @showUpdateMenu="showUpdateMenu(post.id)" @changeFile="onFileChanged(post.id)" @updatePublication="updatePublication(post.id, post.image)">
-              <template v-slot:publicationsContent>
-                <PublicationsContent v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postContent="post.content" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes">
-                  <template v-slot:slotForContent>
-                    <textarea class="publicationsContent__contentParagraph" rows="4" v-bind:data-id="post.id" v-bind:value="post.content" @input="onContentChange"></textarea>
-                  </template>
-                </PublicationsContent>
-              </template>
-            </UpdatePublication>
-          </div>
-        </div>
+            <form aria-label="Formulaire d'ajout de commentaire" action="#" method="POST">
+              <label class="sr-only" v-bind:for="'postCommentTextArea'+post.id">Zone d'ajout de commentaire</label>
+              <textarea class="postCommentTextArea" v-bind:id="'postCommentTextArea'+post.id" v-bind:data-id="post.id" @keyup.enter="postComment(post.id)" rows="3" placeholder="Écrivez un commentaire..."></textarea>
+            </form>   
+          </article>
+        </section>
+    
     </main>
   </div>
 </template>
@@ -77,7 +73,6 @@ export default {
 	},
   methods: {
   onFileSelected() {
-    console.log(event.target.files[0]);
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
     let image = document.createElement("img");
     document.querySelector('.submissionBox__imageBloc').append(image);
@@ -89,7 +84,7 @@ export default {
     window.location.href = "http://localhost:8080/#/profile/" + userId;
   },
   inputAutofocus(dataId) {
-    document.querySelector(`#postCommentTextArea[data-id="${dataId}"]`).focus();
+    document.querySelector(`.postCommentTextArea[data-id="${dataId}"]`).focus();
   },
   fetchComments(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
@@ -177,7 +172,7 @@ export default {
     .catch(function() {                
     alert("Une erreur est survenue lors de l'envoi des données");                
     });
-    document.querySelector('#postCommentTextArea').value = "";
+    document.querySelector('.postCommentTextArea').value = "";
   },
   addLike(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/like";
@@ -245,6 +240,7 @@ export default {
         alert("Une erreur est survenue lors de l'envoi des données")              
     })
     document.querySelector('.submissionBox textarea').value = "";
+      this.$store.dispatch('changeSelectedFile', null);
   },
   showMenu(dataId) {
     let menu = document.querySelector(`.menu[data-id="${dataId}"]`);
@@ -258,20 +254,20 @@ export default {
     let menu = document.querySelector(`.headerMenu`);
     if(menu.classList.contains("active")) {
        menu.classList.replace("active", "inactive");
-       menu.setAttribute("aria-expanded", "false")
+       menu.setAttribute("aria-expanded", "false");
      } else {
        menu.classList.replace("inactive", "active");
        menu.setAttribute("aria-expanded", "true");
      }
   },
-  showUpdateMenu(dataId) {
+  /*showUpdateMenu(dataId) {
     let updateMenu = document.querySelector(`.updateMenu[data-id="${dataId}"]`);
         if(updateMenu.classList.contains("active")) {
        updateMenu.classList.replace("active", "inactive")
      } else {
        updateMenu.classList.replace("inactive", "active")
      }
-  },
+  },*/
   deletePublication(dataId) {
     this.showMenu(dataId);
     let divToDelete = document.querySelector(`.publications__each[data-id="${dataId}"]`);
@@ -295,10 +291,10 @@ export default {
   const url = "http://localhost:3000/api/publications/" + dataId;
   const authorization = "Bearer " + localStorage.getItem('token');
   const fd = new FormData;
-  let textArea = document.querySelector(`.updateMenu textarea[data-id="${dataId}"]`);
-  let imageToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] img[data-id="${dataId}"]`);
-  console.log(imageToUpdate);
-  fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
+  let textArea = document.querySelector(`.publicationsContent[data-id="${dataId}"] textarea[data-id="${dataId}"]`);
+  if(document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`).src !== "" && store.state.selectedFile) {
+      fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
+  }
   fd.append('content', textArea.value);
   fd.append('userId', localStorage.getItem('userId'));
   axios({
@@ -314,8 +310,12 @@ export default {
   );
   let pToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] .publicationsContent__contentParagraph`);
   pToUpdate.innerHTML = textArea.value;
-      let newSource = URL.createObjectURL(store.state.selectedFile);
-      imageToUpdate.setAttribute("src", newSource);
+  if(document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`).src !== "" && store.state.selectedFile) {
+    let imageToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] img[data-id="${dataId}"]`);
+    let newSource = URL.createObjectURL(store.state.selectedFile);
+    imageToUpdate.setAttribute("src", newSource);
+    this.$store.dispatch('changeSelectedFile', null);
+  }  
   }
   },
   computed: {
@@ -343,9 +343,6 @@ export default {
 }
 
 
-
-
-
 </script>
 
 <style lang="scss">
@@ -361,45 +358,15 @@ export default {
     }
 }
 
+// Balise générales à plusieurs composants ou applicable uniquement à la homepage
 main {
   padding-top:55px;
-}
 
-main p {
-  width:100%;
-  margin:0;
-  text-align: center;
-}
-
-//Header
-#mainMenu {
-  display:flex;
-  align-items: baseline;
-
-  & img {
-    max-width:30px;
-    max-height:30px;
-    border-radius:50%;
+  & p {
+    width:100%;
+    margin:0;
+    text-align: center;
   }
-}
-
-
-// Partie soumission d'une publication
-.submissionBox__publiDivAdd svg {
-  fill: rgba(253, 45, 1, 1);
-  position:relative;
-  left: 10px;
-  top: 4px;
-}
-
-#inputFile, .inputUpdateFile {
-  display:none;
-}
-
-
-// Partie publications à la une
-label {
-  cursor:pointer;
 }
 
 h1 {
@@ -425,204 +392,8 @@ h1 {
   }
 }
 
-// Corps de la publication
-.updatePub {
-  fill: black;
-  cursor:pointer;
-  padding:10px;
-
-  &:hover {
-    border-radius:50%;
-    fill: rgba(253, 45, 1, 1);
-    background-color:rgba(253, 45, 1, 0.1);
-  }
-}
-
-//Likes et section commentaires
-
-
-// Menu modif/suppr
-.menu {
-  position:absolute;
-  z-index:3;
-  background-color:transparent;
-  right:0px;
-  top:35px;
-  padding:0;
-  width:100%;
-  @include desktopstyle() {
-    right:15px;
-    top:55px;
-  }
-}
-
-.menu, .updateMenu, .headerMenu {
-    &.inactive {
-    display:none;
-  }
-
-  &.active {
-    display:initial;
-  }
-}
-
-.headerMenu {
-  position:absolute;
-  z-index:99;
-  cursor:pointer;
-  @include desktopstyle() {
-      top:75px;
-  right:35px;
-  }
-
-  & ul {
-                    border: rgba(128, 128, 128, 0.1) solid 0.5px;
-  box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
-    background:radial-gradient(circle, rgba(254,251,251,1) 0%, rgba(254,251,251,1) 100%);
-    border-radius:3px;
-  }
-
-  & ul, a {
-    width:200px;
-    font-size:0.8rem;
-    line-height:1.2rem;
-    text-decoration:none;
-    font-weight:normal;
-  }
-}
-
-ul {
-  background-color:white;
-  list-style-type: none;
-  border: black solid 0.5px;
-  padding:5px 10px;
-  font-size:0.8rem;
-  line-height: 1.5rem;
-  @include desktopstyle() {
-    width:250px;
-    margin:0;
-    padding:10px;
-  }
-
-  & li {
-    cursor: pointer;
-
-    &:hover {
-      background-color: #ffd7d7;
-    }
-  }
-}
-
-// Menu de mise à jour publication
-.updateMenu__headers {
-  display:flex;
-  justify-content: space-between;
-  align-items:center;
-}
-
-.updateMenu #numberOfLikes, .updateMenu #commentAndLikesSection {
-  display:none;
-}
-
-.updateMenu.active {
-  position:fixed;
-  margin: auto;
-  height:100%;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index:99;
-  background-color:white;
-  padding:10px 30px;
-  max-width:600px;
-  min-height:500px;
-  width:80%;
-  @include desktopstyle() {
-    top:70px;
-    height:auto;
-  }
-
-  & textarea {
-    width:90%;
-  }
-  
-  & button {
-    height:35px;
-    border-radius: 25px;
-    background-color: #ffd7d7; 
-    border:transparent 1px solid;
-    font-weight: 600;
-    margin-top:25px;
-  }
-
-  & .closeButton {
-    border-radius:0;
-    height:20px;
-    font-size:0.7rem;
-    margin-top:0;
-  }
-
-  & .userProfilePicture img {
-      margin:0;
-  }
-}
-
-.displayFlex {
-  display:flex;
-  justify-content: flex-start;
-  align-items: center;
-
-  & h4 {
-    padding-top:0px;
-    padding-bottom:0;
-    margin:0;
-  }
-
-  & p:nth-child(2) {
-    font-size: 0.9rem;
-  }
-}
-
-.userProfilePicture {
-  margin-left:10px;
-  margin-top:5px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow:hidden;
-  position:relative;
-  @include desktopstyle() {
-    width: 60px;
-    height: 60px;
-    margin-left:10px;
-    margin-top:10px;
-  }
-
-  & img {
-    width:100%;
-  }
-}
-
-.submissionBox__imageBloc img, .updateMenu img {
-  max-width:100%;
-  @include desktopstyle() {
-      max-width:500px;
-      margin:10px auto;
-  }
-}
-
-button {
-  background-color: transparent;
-  border:none;
-  cursor:pointer;
-  font-family:"Montserrat", sans-serif;
-  font-size:0.9rem;
-}
-
-#postCommentTextArea {
+.postCommentTextArea {
   width:95%;
-  //margin-top:3px;
-  //margin-left:20px;
   border-radius:5px;
   border:none;
   background-color:#f1f2f6;
@@ -645,14 +416,21 @@ button {
   }
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  border: 0;
+.menu, .updateMenu, .headerMenu {
+    &.inactive {
+    display:none;
+  }
+
+  &.active {
+    display:initial;
+  }
+}
+
+.submissionBox__imageBloc img, .updateMenu img {
+  max-width:100%;
+  @include desktopstyle() {
+      max-width:500px;
+      margin:10px auto;
+  }
 }
 </style>
