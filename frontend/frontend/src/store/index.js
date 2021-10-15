@@ -88,7 +88,11 @@ export default createStore({
         url: url,
       })
       .then(response => {
-        commit('SET_POSTS', response.data)
+        if(response.data == 'http://localhost:8080/#/login') {
+          window.location.href = response.data
+        } else {
+          commit('SET_POSTS', response.data)
+        }
       })
     },
     getPostsByUser({ commit }, userId) {

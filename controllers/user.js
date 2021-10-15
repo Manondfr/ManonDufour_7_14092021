@@ -106,6 +106,7 @@ exports.login = (req, res, next) => {
     );
   };
 
+
   exports.getPublicationsByUser = (req, res, next) => {
     Publication.findAll({ where: { user_id: req.params.id }, order: [['created_at', 'DESC']], include: [User],   attributes: [
       'id', 'content', 'image', 'user_id', 'usersLiked', 'likes',
@@ -172,13 +173,13 @@ exports.login = (req, res, next) => {
   };
 
   exports.logout = (req, res, next) => {
-    req.session.destroy()
-    .then(
-      () => res.clearCookie('hello')
-      .then(() => res.status(200).message({message : 'Utilisateur déconnecté !'}))
-      .catch(error => res.status(400).json({ error }))
-    )
-    .catch(error => res.status(400).json({ error }));
+    req.session.destroy(err => {
+      if (err) {
+        return res.send('http://localhost:8080/#/homepage')
+      }
+      res.clearCookie('hello');
+      return res.send('http://localhost:8080/#/login')
+    })
   }
       
     

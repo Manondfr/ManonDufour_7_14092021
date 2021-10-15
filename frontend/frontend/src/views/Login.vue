@@ -18,6 +18,7 @@ import LoginBox from '../components/LoginBox.vue'
 //var Vue = require('vue')
 //Vue.use(require('vue-cookies'))
 axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true
 
 export default {
 	name: 'App',
@@ -54,7 +55,19 @@ export default {
     })
     .catch(function() {                
         alert("La connexion a échoué")});                
-  }}
+  }},
+  beforeMount() {
+    axios({
+      method: 'get',
+      withCredentials:true,
+      url: 'http://localhost:3000/api/auth/',
+    })
+    .then(response => {
+      if(response.data == 'http://localhost:8080/#/homepage') {
+        window.location.href = response.data
+      } 
+    })
+  }
 }
 </script>
 

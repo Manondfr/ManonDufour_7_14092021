@@ -10,7 +10,10 @@ export default {
     methods: {
         showHeaderMenu() {
             this.$emit('showHeaderMenu')
-        },        
+        },  
+        logout() {
+            this.$emit('logout')
+        }      
     }
 }
 </script>
@@ -26,7 +29,7 @@ export default {
             <div class="headerMenu inactive" id="headerMenu">
                 <ul>
                     <li><router-link v-bind:to="'/profile/' + userId">Voir le profil</router-link></li>
-                    <li>Se déconnecter</li>
+                    <li @click="logout">Se déconnecter</li>
                 </ul>
             </div>
         <!-- Fin du menu de navigation -->

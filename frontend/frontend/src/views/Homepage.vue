@@ -1,6 +1,6 @@
 <template>
   <div>   
-    <HeaderContent @showHeaderMenu="showHeaderMenu" role="banner" v-bind:condition="$route.path !== '/signup' || $route.path !== '/login'" v-bind:name="$store.state.firstName" v-bind:profilePicture="$store.state.profilePicture" v-bind:userId="$store.state.userId">
+    <HeaderContent @logout="logout" @showHeaderMenu="showHeaderMenu" role="banner" v-bind:condition="$route.path !== '/signup' || $route.path !== '/login'" v-bind:name="$store.state.firstName" v-bind:profilePicture="$store.state.profilePicture" v-bind:userId="$store.state.userId">
     </HeaderContent>
 
     <main>
@@ -78,6 +78,26 @@ export default {
     Comment
 	},
   methods: {
+  logout() {
+    const url = "http://localhost:3000/api/auth/logout";
+    const authorization = "Bearer " + localStorage.getItem('token');
+    axios({
+      method: 'post',
+      headers: {
+        'Authorization': authorization
+      },
+      url:url
+    })
+    .then(function(res) {
+      if (res.ok) {
+        return res.json();
+      }
+      window.location.href = "http://localhost:8080/#/login"
+    })
+    .catch(function() {                
+    alert("Une erreur est survenue lors de la déconnexion");                
+    });
+  },
   onFileSelected() {
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
     let image = document.createElement("img");
