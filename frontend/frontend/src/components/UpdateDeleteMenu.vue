@@ -55,6 +55,10 @@ ul {
       background-color: #ffd7d7;
     }
   }
+
+  & button {
+      font-weight:normal;
+  }
 }
 
 .menu {

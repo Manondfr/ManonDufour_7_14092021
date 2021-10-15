@@ -6,76 +6,85 @@
     <main>
       <div class="userInfos">
         <div class="userProfilePicture" id="generalUserProfilePicture">
-          <img v-bind:src="$store.state.profilePicture"/>
+          <img v-bind:src="$store.state.profilePicture" alt="Photo de profil utilisateur"/>
         </div>
         <h1>{{ $store.state.firstName}} {{ $store.state.lastName }}</h1>
         <p> {{ $store.state.gender }} </p>
         <p> {{ $store.state.occupation }} </p>
         <p> {{ $store.state.birthday }} </p>
         <p>{{ $store.state.about }}</p>
-        <button v-if="$route.path == '/profile' + $store.state.userId" @click="showUpdateInfosMenu" id="updateInfosButton">Modifier mes informations personnelles</button>
+        <button v-if="$route.path == '/profile/' + fetchUserId" @click="showUpdateInfosMenu" id="updateInfosButton">Modifier mes informations personnelles</button>
         
+        <!-- Menu de mise à jour des informations personnelles -->
+        <div class="updateInfosMenu inactive">
+          <div class="updateMenu__headers">
+            <h2>Mettre à jour les informations utilisateurs</h2>
+            <button aria-label="Fermeture du menu de modification du profil utilisateur" class="closeButton" @click="showUpdateInfosMenu">X</button>
+          </div>
+          <div class="userProfilePicture" id="generalUserProfilePicture">
+            <img v-bind:src="$store.state.profilePicture" alt="Photo de profil utilisateur"/>
+          </div>
+          <input type="file" id="inputUpdateProfilePicture" multiple = false @change="onProfilePictureChanged">
+          <label role="button" tabindex="0" for="inputUpdateProfilePicture" class="submissionBox__publiDivAdd"><p>Modifier ma photo de profil <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
+          <form aria-label="Formulaire de mise à jour des informations utilisateur" method="POST" action="#">
+            <label for="gender">Genre</label><input v-bind:value="$store.state.gender" id="gender"/>
+            <label for="birthday">Date de naissance</label><input v-bind:value="$store.state.birthday" id="birthday"/>
+            <label for="occupation">Poste</label><input v-bind:value="$store.state.occupation" id="occupation"/>
+            <label for="about">A propos</label><textarea v-bind:value="$store.state.about" id="about"></textarea>
+          </form>
+          <div id="updateButtons">
+            <button @click="saveNewInfos">Enregistrer les modifications</button>
+            <button @click="deleteAccount" id="deleteAccountButton">Supprimer mon compte</button>
+          </div>
+        </div>
+
         <!-- Partie soumission d'un post -->
         <PostSubmission role="region" v-bind:userName="$store.state.firstName" @changeContent="onContentChange" @postContent="postContent" @selectFile="onFileSelected"></PostSubmission>
       </div>
 
-      <!-- Menu de mise à jour des informations personnelles -->
-      <div class="updateInfosMenu inactive">
-        <div class="updateMenu__headers">
-          <h2>Mettre à jour les informations utilisateurs</h2>
-          <button class="closeButton" @click="showUpdateInfosMenu">X</button>
-        </div>
-        <div class="userProfilePicture" id="generalUserProfilePicture">
-          <img v-bind:src="$store.state.profilePicture"/>
-        </div>
-        <input type="file" id="inputUpdateProfilePicture" multiple = false @change="onProfilePictureChanged">
-        <label for="inputUpdateProfilePicture" class="submissionBox__publiDivAdd"><p>Modifier ma photo de profil <svg xmlns="http://www.w3.org/2000/svg" width="25" viewBox="0 0 576 512"><path d="M480 416v16c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V176c0-26.51 21.49-48 48-48h16v48H54a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6v-10h48zm42-336H150a6 6 0 0 0-6 6v244a6 6 0 0 0 6 6h372a6 6 0 0 0 6-6V86a6 6 0 0 0-6-6zm6-48c26.51 0 48 21.49 48 48v256c0 26.51-21.49 48-48 48H144c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h384zM264 144c0 22.091-17.909 40-40 40s-40-17.909-40-40 17.909-40 40-40 40 17.909 40 40zm-72 96l39.515-39.515c4.686-4.686 12.284-4.686 16.971 0L288 240l103.515-103.515c4.686-4.686 12.284-4.686 16.971 0L480 208v80H192v-48z"/></svg></p></label>
-        <form>
-          <label for="gender">Genre</label><input v-bind:value="$store.state.gender" id="gender"/>
-          <label for="birthday">Date de naissance</label><input v-bind:value="$store.state.birthday" id="birthday"/>
-          <label for="occupation">Poste</label><input v-bind:value="$store.state.occupation" id="occupation"/>
-          <label for="about">A propos</label><textarea v-bind:value="$store.state.about" id="about"></textarea>
-        </form>
-        <div id="updateButtons">
-          <button @click="saveNewInfos">Enregistrer les modifications</button>
-          <button @click="deleteAccount" id="deleteAccountButton">Supprimer mon compte</button>
-        </div>
-      </div>
+      <!-- Partie publications à la une -->        
+        <section class="publications">
+          <h1>Publications à la une</h1>
+          <article class="publications__each" v-for='post in posts' :key='post.id' v-bind:data-id="post.id">  
 
-
-      <div class="publications">
-        <h1>Publications</h1>
-        <div class="publications__each" v-for='post in posts' :key='post.id' v-bind:data-id="post.id">  
-
-          <!-- Corps de la publication -->
-          <PublicationsContent @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || adminStatus == true" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content">
-            <template v-slot:slotForContent>
-              <p class="publicationsContent__contentParagraph">{{ post.content }}</p>
-            </template>
-          </PublicationsContent>
-          <div v-for='comment in comments' :key='comment.id'>
-            <Comment @updateCommentContent="updateCommentContent(post.id, comment.id)" @deleteComment="deleteComment(post.id, comment.id)" @updateComment="updateComment(comment.id)" @visitProfile="visitProfile(comment.user.id)" v-bind:commentContent="comment.commentContent" v-bind:userLastName="comment.user.last_name" v-bind:userFirstName="comment.user.first_name" v-bind:commentId="comment.id" v-bind:condition="comment.publication_id == post.id" v-bind:contentCreator="fetchUserId == post.user_id || adminStatus == true"></Comment>           
-          </div>
-          <form aria-label="Formulaire d'ajout de commentaire" action="#" method="POST">
-            <label class="sr-only" v-bind:for="'postCommentTextArea'+post.id">Zone d'ajout de commentaire</label>
-            <textarea class="postCommentTextArea" v-bind:id="'postCommentTextArea'+post.id" v-bind:data-id="post.id" @keyup.enter="postComment(post.id)" rows="3" placeholder="Écrivez un commentaire..."></textarea>
-          </form>   
-
-          <!-- On clic : Menu modification/suppression -->
-          <UpdateDeleteMenu v-bind:postId="post.id" @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)"></UpdateDeleteMenu>
-
-          <!-- On clic : Menu de mise à jour publication -->
-          <UpdatePublication v-bind:postId="post.id" v-bind:postImage="post.image" @showUpdateMenu="showUpdateMenu(post.id)" @changeFile="onFileChanged(post.id)" @updatePublication="updatePublication(post.id, post.image)">
-            <template v-slot:publicationsContent>
-              <PublicationsContent v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postContent="post.content" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes">
-                <template v-slot:slotForContent>
-                  <textarea class="publicationsContent__contentParagraph" rows="4" v-bind:data-id="post.id" v-bind:value="post.content" @input="onContentChange"></textarea>
+            <!-- Corps de la publication -->
+            <PublicationsContent @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)" @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || adminStatus == true" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content">
+                <!-- On clic : Menu modification/suppression -->
+                <template v-slot:updateDeleteMenu>
+                  <UpdateDeleteMenu v-bind:postId="post.id" @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)"></UpdateDeleteMenu>
+                  <!-- On clic sur Modifier la publication : Menu de mise à jour publication -->
+                  <UpdatePublication v-bind:postId="post.id" v-bind:postImage="post.image" @showUpdateMenu="showUpdateMenu(post.id)" @changeFile="onFileChanged(post.id)" @updatePublication="updatePublication(post.id, post.image)">
+                    <template v-slot:publicationsContent>
+                      <PublicationsContent v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postContent="post.content" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes">
+                        <template v-slot:slotForContent>
+                          <label class="sr-only" v-bind:for="'publicationsContent__contentParagraph'+post.id">Zone de modification du contenu de la publication</label>
+                          <textarea class="publicationsContent__contentParagraph" v-bind:id="'publicationsContent__contentParagraph'+post.id" rows="4" v-bind:data-id="post.id" v-bind:value="post.content" @input="onContentChange"></textarea>
+                        </template>
+                      </PublicationsContent>
+                    </template>
+                  </UpdatePublication>
+                  <!-- Fin du menu de modification de la publication -->
                 </template>
-              </PublicationsContent>
-            </template>
-          </UpdatePublication>
-        </div>
-      </div>  
+                <!-- Fin du menu de modification et suppression -->
+                <template v-slot:slotForContent>
+                      <p class="publicationsContent__contentParagraph" v-bind:class="'publicationsContent__contentParagraph'+post.id" v-bind:id="'publicationsContent__contentParagraph'+post.id">{{ post.content }}</p>
+                      <div class="divImage" v-bind:class="'divImage'+post.id">
+                        <img v-if="post.image" v-bind:data-id="post.id" v-bind:src="post.image" alt="Image accompagnant la publication"/>
+                      </div>
+                </template>
+                <template v-slot:numberOfLikes>
+                   <p v-bind:class="'numberOfLikes'+post.id" v-show="post.likes > 0"><svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>{{ post.likes }}</p>
+                </template>
+            </PublicationsContent>
+            <div v-for='comment in comments' :key='comment.id'>
+              <Comment @updateCommentContent="updateCommentContent(post.id, comment.id)" @deleteComment="deleteComment(post.id, comment.id)" @updateComment="updateComment(comment.id)" @visitProfile="visitProfile(comment.user.id)" v-bind:commentContent="comment.commentContent" v-bind:userLastName="comment.user.last_name" v-bind:userFirstName="comment.user.first_name" v-bind:commentId="comment.id" v-bind:condition="comment.publication_id == post.id" v-bind:contentCreator="fetchUserId == post.user_id || adminStatus == true"></Comment>           
+            </div>
+            <form aria-label="Formulaire d'ajout de commentaire" action="#" method="POST">
+              <label class="sr-only" v-bind:for="'postCommentTextArea'+post.id">Zone d'ajout de commentaire</label>
+              <textarea class="postCommentTextArea" v-bind:id="'postCommentTextArea'+post.id" v-bind:data-id="post.id" @keyup.enter="postComment(post.id)" rows="3" placeholder="Écrivez un commentaire..."></textarea>
+            </form>   
+          </article>
+        </section>
     </main>     
   </div>
 </template>
@@ -117,10 +126,12 @@ export default {
   },
   fetchComments(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'get',
       headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization' : authorization
       },
       url:url
     })
@@ -136,10 +147,12 @@ export default {
   },
     updateCommentContent(dataId, commentId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments/" + commentId;
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'put',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization' : authorization
       },
       url: url,
       data: {               "commentContent" : event.target.value,
@@ -162,8 +175,12 @@ export default {
   deleteComment(dataId, commentId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments/" + commentId;
     const commentToDelete = document.querySelector(`.commentSection[data-id="${commentId}"]`);
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'delete',
+      headers: {
+        'Authorization' : authorization
+      },
       url: url,
     })
     .then(function(res) {
@@ -181,13 +198,16 @@ export default {
     console.log(event.target.value);
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
     console.log(url);
+    const authorization = "Bearer " + localStorage.getItem('token');
+    const Id = Number(localStorage.getItem('userId'));
     axios({
       method: 'post',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization' : authorization
       },
       url: url,
-      data: { "userId" : localStorage.getItem('userId'),
+      data: { "userId" : Id,
               "commentContent" : event.target.value,
               "publicationId" : dataId
       }
@@ -203,25 +223,30 @@ export default {
     });
     document.querySelector('.postCommentTextArea').value = "";
   },
-  addLike(dataId) {
+addLike(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/like";
+    const authorization = "Bearer " + localStorage.getItem('token');
+    const Id = Number(localStorage.getItem('userId'));
     axios({
       method: 'post',
       headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization' : authorization
       },
       url: url,
-      data: { "userId" : localStorage.getItem('userId') }
+      data: { "userId" : Id }
     })
     .then(function(res) {
     if (res.ok) {
         return res.json();
         }
-    document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).innerHTML = `<svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>${res.data.likes}`;
+    console.log(res.data.likes);
+    console.log(document.querySelectorAll(`.numberOfLikes${dataId}`));
+    document.querySelector(`.numberOfLikes${dataId}`).innerHTML = `<svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>${res.data.likes}`;
     if(res.data.likes == 0) {
-      document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).style.display = "none"
+      document.querySelector(`.numberOfLikes${dataId}`).style.display = "none"
     } else {
-      document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).style.display = "inherit"
+      document.querySelector(`.numberOfLikes${dataId}`).style.display = "inherit"
     }
     })
     .catch(function() {                
@@ -251,10 +276,12 @@ export default {
     }
     fd.append('content', store.state.content);
     fd.append('userId', localStorage.getItem('userId'));
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'post',
       headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization' : authorization
       },
       url: 'http://localhost:3000/api/publications',
       data: fd
@@ -305,7 +332,7 @@ export default {
     axios({
       method: 'delete',
       headers: {
-        'Authorization' : authorization
+        'Authorization' : authorization,
       },
       url: url,
     })
@@ -358,9 +385,12 @@ export default {
   },
     deleteAccount() {
     const url = "http://localhost:3000/api/auth/user/" + localStorage.getItem("userId");
-    console.log(url);
+      const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'delete',
+      headers: {
+        'Authorization': authorization
+      },
       url: url,
     })
     .then(function(res) {
@@ -403,7 +433,10 @@ export default {
             document.querySelector(".userInfos p:nth-child(4)").textContent = document.querySelector("#occupation").value;
             document.querySelector(".userInfos p:nth-child(5)").textContent = document.querySelector("#birthday").value;
             document.querySelector(".userInfos p:nth-child(6)").textContent = document.querySelector("#about").value;
-
+            document.querySelector("header .profileAccess img").setAttribute('src', URL.createObjectURL(store.state.profilePicture));
+            document.querySelectorAll(".publicationsContent img").forEach(image => {
+              image.setAttribute('src', URL.createObjectURL(store.state.profilePicture))
+            });
             this.showUpdateInfosMenu()
             },
                 showUpdateInfosMenu() {
@@ -456,12 +489,6 @@ export default {
 // Balise générales à plusieurs composants ou applicable à la homepage et au profil
 main {
   padding-top:55px;
-
-  & p {
-    width:100%;
-    margin:0;
-    text-align: center;
-  }
 }
 
 h1 {
@@ -473,66 +500,6 @@ h1 {
   }
 }
 
-.publications__each {
-  position:relative;
-  width:90%;
-  margin:30px auto;
-  padding-bottom:10px;
-  background-color: rgba(255, 255, 255, 0.8) ;
-  border-top: rgba(128, 128, 128, 0.1) solid 1.5px;
-  border-bottom: rgba(128, 128, 128, 0.1) solid 2px;
-  box-shadow: 8px 0 3px -4px rgba(128, 128, 128, 0.2), -8px 0 3px -4px rgba(128, 128, 128, 0.2);
-    @include desktopstyle {
-    width:60%;
-  }
-}
-
-.postCommentTextArea {
-  width:95%;
-  //margin-top:3px;
-  //margin-left:20px;
-  border-radius:5px;
-  border:none;
-  background-color:#f1f2f6;
-  font-size:0.7rem;
-  font-family:"Montserrat", sans-serif;
-  padding:5px 0 0 5px;  
-  @include desktopstyle() {
-    margin:10px 30px;
-    padding:3px;
-    font-size: 0.8rem;
-  }
-
-  &::placeholder {
-    font-size:0.7rem;
-    font-family:"Montserrat", sans-serif; 
-    margin:5px 0 0 5px;   
-    @include desktopstyle() {
-      font-size:0.8rem;
-    }
-  }
-}
-
-.menu, .updateMenu, .updateInfosMenu, .headerMenu {
-  &.inactive {
-    display:none;
-  }
-
-  &.active {
-    display:initial;
-  }
-}
-
-.submissionBox__imageBloc img, .updateMenu img {
-  max-width:100%;
-  @include desktopstyle() {
-      max-width:500px;
-      margin:10px auto;
-  }
-}
-
-
-// Balises applicables uniquement au profil
 .updateInfosMenu {
   height:100%;
   @include desktopstyle() {
@@ -548,13 +515,51 @@ h1 {
   }
 }
 
+// Partie infos utilisateur et soumission de post
+.userInfos {
+  margin:20px auto;
+  text-align:center;
+  width:98%;
+  padding:20px 0;
+  border: rgba(128, 128, 128, 0.1) solid 0.5px;
+  box-shadow: 1px 2px 10px rgba(128, 128, 128, 0.2);
+  background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
 
+  & h1 {
+    margin-top:10px;
+  }
 
-// Menu de mise à jour publication
-#inputFile, .inputUpdateFile, #inputUpdateProfilePicture {
-  display:none;
+  & p:nth-child(1), p:nth-child(4), p:nth-child(5), p:nth-child(6) {
+    font-size: 0.8rem;
+    @include desktopstyle() {
+      font-size: 1rem;
+    }
+  }
 }
 
+#generalUserProfilePicture {
+  width:120px;
+  height:120px;
+  margin:auto;
+}
+
+#updateInfosButton {
+    height:35px;
+    border-radius: 25px;
+    border:transparent 1px solid;
+    font-weight: 600;
+    margin-top:25px;  
+    margin-bottom:40px;
+    background-color: #ffd7d7; 
+}
+
+#profilePostSubmission {
+  box-shadow:none;
+  border:none;
+}
+
+
+// Partie mise à jour des infos utilisateur
 .updateMenu.active, .updateInfosMenu.active {
   position:fixed;
   margin: auto;
@@ -592,73 +597,19 @@ h1 {
   }
 }
 
-
-
-
-
-
-
-
-.userInfos {
-  margin:20px auto;
-  text-align:center;
-width:98%;
-  padding:20px 0;
-        border: rgba(128, 128, 128, 0.1) solid 0.5px;
-  box-shadow: 1px 2px 10px rgba(128, 128, 128, 0.2);
-    background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
-
-    & h1 {
-      margin-top:10px;
-    }
-
-    & p:nth-child(1), p:nth-child(4), p:nth-child(5), p:nth-child(6) {
-      font-size: 0.8rem;
-      @include desktopstyle() {
-        font-size: 1rem;
-      }
-    }
-}
-
-#updateInfosButton {
-    height:35px;
-    border-radius: 25px;
-    border:transparent 1px solid;
-    font-weight: 600;
-    margin-top:25px;  
-    margin-bottom:40px;
-        background-color: #ffd7d7; 
-}
-
-#generalUserProfilePicture {
-  width:120px;
-  height:120px;
-  margin:auto;
-}
-
-#profilePostSubmission {
-  box-shadow:none;
-  border:none;
-}
-
-#deleteAccountButton {
-  background-color:darken(rgb(253, 45, 1), 15%);
-  color:white;
-}
-
 form {
   display:flex;
   flex-direction:column;
 
-    & input {
+  & input {
     width:200px;
     margin:8px auto;
-        font-family:"Montserrat", sans-serif;
+    font-family:"Montserrat", sans-serif;
   }
 
   & label {
-        font-size: 0.8rem;
-        margin-top:10px;
+    font-size: 0.8rem;
+    margin-top:10px;
   }
 
   & #about {
@@ -668,7 +619,6 @@ form {
     font-family:"Montserrat", sans-serif;
     margin:8px auto;
   }
-
 }
 
 #updateButtons {
@@ -677,8 +627,7 @@ form {
   width:40%;
   min-width:220px;
   margin:auto;
-  justify-content: space-between;
-  
+  justify-content: space-between;  
 
   & button {
     font-size:0.8rem;
@@ -686,5 +635,14 @@ form {
       font-size:0.9rem;
     }
   }
+}
+
+#deleteAccountButton {
+  background-color:darken(rgb(253, 45, 1), 15%);
+  color:white;
+}
+
+#inputFile, .inputUpdateFile, #inputUpdateProfilePicture {
+  display:none;
 }
 </style>

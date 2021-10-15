@@ -11,15 +11,21 @@
   "dependencies": {
     "@vue/composition-api": "^1.2.3",
     "bcrypt": "^5.0.1",
+    "connect-session-sequelize": "^7.1.2",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "maskdata": "^1.1.6",
     "multer": "^1.4.3",
     "mysql2": "^2.3.0",
+    "node-uuid": "^1.4.8",
     "password-validator": "^5.1.1",
     "path": "^0.12.7",
-    "sequelize": "^6.6.5"
-  }
+    "sequelize": "^6.6.5",
+    "uid-safe": "^2.1.5"
+  },
+  "devDependencies": {}
 }

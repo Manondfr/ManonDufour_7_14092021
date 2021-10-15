@@ -3,6 +3,7 @@ const sequelize = new Sequelize('socialnetwork', 'P6user', 'P6user', {
     host: 'localhost',
     dialect: 'mysql',
     logging: false,
+    storage: "./session.mysql",
 }); 
 
 try {

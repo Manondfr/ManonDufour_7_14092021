@@ -13,7 +13,7 @@
           <article class="publications__each" v-for='post in posts' :key='post.id' v-bind:data-id="post.id">  
 
             <!-- Corps de la publication -->
-            <PublicationsContent  @deletePublication="deletePublication(post.id)" v-bind:imageAppearance="post.image !== null" @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || adminStatus == true" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content">
+            <PublicationsContent @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)" @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || adminStatus == true" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content">
                 <!-- On clic : Menu modification/suppression -->
                 <template v-slot:updateDeleteMenu>
                   <UpdateDeleteMenu v-bind:postId="post.id" @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)"></UpdateDeleteMenu>
@@ -32,7 +32,13 @@
                 </template>
                 <!-- Fin du menu de modification et suppression -->
                 <template v-slot:slotForContent>
-                      <p class="publicationsContent__contentParagraph">{{ post.content }}</p>
+                      <p class="publicationsContent__contentParagraph" v-bind:class="'publicationsContent__contentParagraph'+post.id" v-bind:id="'publicationsContent__contentParagraph'+post.id">{{ post.content }}</p>
+                      <div class="divImage" v-bind:class="'divImage'+post.id">
+                        <img v-if="post.image" v-bind:data-id="post.id" v-bind:src="post.image" alt="Image accompagnant la publication"/>
+                      </div>
+                </template>
+                <template v-slot:numberOfLikes>
+                   <p v-bind:class="'numberOfLikes'+post.id" v-show="post.likes > 0"><svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>{{ post.likes }}</p>
                 </template>
             </PublicationsContent>
             <div v-for='comment in comments' :key='comment.id'>
@@ -88,10 +94,12 @@ export default {
   },
   fetchComments(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'get',
       headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': authorization
       },
       url:url
     })
@@ -107,10 +115,12 @@ export default {
   },
     updateCommentContent(dataId, commentId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments/" + commentId;
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'put',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization' : authorization
       },
       url: url,
       data: {               "commentContent" : event.target.value,
@@ -133,8 +143,12 @@ export default {
   deleteComment(dataId, commentId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments/" + commentId;
     const commentToDelete = document.querySelector(`.commentSection[data-id="${commentId}"]`);
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'delete',
+      headers: {
+        'Authorization' : authorization
+      },
       url: url,
     })
     .then(function(res) {
@@ -152,13 +166,16 @@ export default {
     console.log(event.target.value);
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
     console.log(url);
+    const authorization = "Bearer " + localStorage.getItem('token');
+    const Id = Number(localStorage.getItem('userId'));
     axios({
       method: 'post',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization' : authorization
       },
       url: url,
-      data: { "userId" : localStorage.getItem('userId'),
+      data: { "userId" : Id,
               "commentContent" : event.target.value,
               "publicationId" : dataId
       }
@@ -176,23 +193,27 @@ export default {
   },
   addLike(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/like";
+    const authorization = "Bearer " + localStorage.getItem('token');
+    const Id = Number(localStorage.getItem('userId'));
     axios({
       method: 'post',
       headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization' : authorization
       },
       url: url,
-      data: { "userId" : localStorage.getItem('userId') }
+      data: { "userId" : Id }
     })
     .then(function(res) {
     if (res.ok) {
         return res.json();
         }
-    document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).innerHTML = `<svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>${res.data.likes}`;
+    console.log(res.data.likes);
+    document.querySelector(`.numberOfLikes${dataId}`).innerHTML = `<svg width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"/></svg>${res.data.likes}`;
     if(res.data.likes == 0) {
-      document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).style.display = "none"
+      document.querySelector(`.numberOfLikes${dataId}`).style.display = "none"
     } else {
-      document.querySelector(`.publicationsContent[data-id="${dataId}"] #numberOfLikes`).style.display = "inherit"
+      document.querySelector(`.numberOfLikes${dataId}`).style.display = "inherit"
     }
     })
     .catch(function() {                
@@ -206,6 +227,11 @@ export default {
   },
   onFileChanged(dataId) {
     this.$store.dispatch('changeSelectedFile', event.target.files[0]);
+    if(!document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`)) {
+      let image = document.createElement('img');
+      image.setAttribute(`data-id`, `${dataId}`)
+      document.querySelector(`.updateMenu[data-id="${dataId}"] .updateMenu__buttons`).prepend(image)
+    }
     let image = document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`);
     let imgSrc = URL.createObjectURL(event.target.files[0]);
     image.setAttribute('src', imgSrc);
@@ -222,10 +248,12 @@ export default {
     }
     fd.append('content', store.state.content);
     fd.append('userId', localStorage.getItem('userId'));
+    const authorization = "Bearer " + localStorage.getItem('token');
     axios({
       method: 'post',
       headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization' : authorization
       },
       url: 'http://localhost:3000/api/publications',
       data: fd
@@ -245,9 +273,11 @@ export default {
   showMenu(dataId) {
     let menu = document.querySelector(`.menu[data-id="${dataId}"]`);
     if(menu.classList.contains("active")) {
-       menu.classList.replace("active", "inactive")
+      menu.classList.replace("active", "inactive");
+      menu.setAttribute("aria-expanded", "false")
      } else {
-       menu.classList.replace("inactive", "active")
+      menu.classList.replace("inactive", "active")
+      menu.setAttribute("aria-expanded", "true");
      }
   },
     showHeaderMenu() {
@@ -260,14 +290,14 @@ export default {
        menu.setAttribute("aria-expanded", "true");
      }
   },
-  /*showUpdateMenu(dataId) {
+  showUpdateMenu(dataId) {
     let updateMenu = document.querySelector(`.updateMenu[data-id="${dataId}"]`);
         if(updateMenu.classList.contains("active")) {
        updateMenu.classList.replace("active", "inactive")
      } else {
        updateMenu.classList.replace("inactive", "active")
      }
-  },*/
+  },
   deletePublication(dataId) {
     this.showMenu(dataId);
     let divToDelete = document.querySelector(`.publications__each[data-id="${dataId}"]`);
@@ -276,7 +306,7 @@ export default {
     axios({
       method: 'delete',
       headers: {
-        'Authorization' : authorization
+        'Authorization' : authorization,
       },
       url: url,
     })
@@ -292,7 +322,7 @@ export default {
   const authorization = "Bearer " + localStorage.getItem('token');
   const fd = new FormData;
   let textArea = document.querySelector(`.publicationsContent[data-id="${dataId}"] textarea[data-id="${dataId}"]`);
-  if(document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`).src !== "" && store.state.selectedFile) {
+  if(document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`) && store.state.selectedFile) {
       fd.append('image', store.state.selectedFile, store.state.selectedFile.name);
   }
   fd.append('content', textArea.value);
@@ -308,10 +338,16 @@ export default {
   .then(
     () => { console.log('ok') }
   );
-  let pToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] .publicationsContent__contentParagraph`);
+  let pToUpdate = document.querySelector(`p.publicationsContent__contentParagraph${dataId}`);
   pToUpdate.innerHTML = textArea.value;
-  if(document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`).src !== "" && store.state.selectedFile) {
-    let imageToUpdate = document.querySelector(`.publications__each[data-id="${dataId}"] img[data-id="${dataId}"]`);
+  if(document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`) && store.state.selectedFile) {
+    if(!document.querySelector(`div.divImage${dataId} > img`)) {
+      let image = document.createElement('img');
+      image.setAttribute('alt', 'Image accompagnant la publication');
+      document.querySelector(`div.divImage${dataId}`).appendChild(image);
+    }
+    let imageToUpdate = document.querySelector(`div.divImage${dataId} > img`);
+    //imageToUpdate.style.display = "initial";
     let newSource = URL.createObjectURL(store.state.selectedFile);
     imageToUpdate.setAttribute("src", newSource);
     this.$store.dispatch('changeSelectedFile', null);
@@ -345,7 +381,7 @@ export default {
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @mixin tabletstyle {
     @media all and (min-width:483px){
         @content;
@@ -361,12 +397,6 @@ export default {
 // Balise générales à plusieurs composants ou applicable uniquement à la homepage
 main {
   padding-top:55px;
-
-  & p {
-    width:100%;
-    margin:0;
-    text-align: center;
-  }
 }
 
 h1 {
@@ -375,62 +405,6 @@ h1 {
   @include desktopstyle() {
     margin-top:80px;
     letter-spacing: 1px;
-  }
-}
-
-.publications__each {
-  position:relative;
-  width:90%;
-  margin:30px auto;
-  padding-bottom:10px;
-  background-color: rgba(255, 255, 255, 0.8) ;
-  border-top: rgba(128, 128, 128, 0.1) solid 1.5px;
-  border-bottom: rgba(128, 128, 128, 0.1) solid 2px;
-  box-shadow: 8px 0 3px -4px rgba(128, 128, 128, 0.2), -8px 0 3px -4px rgba(128, 128, 128, 0.2);
-    @include desktopstyle {
-    width:60%;
-  }
-}
-
-.postCommentTextArea {
-  width:95%;
-  border-radius:5px;
-  border:none;
-  background-color:#f1f2f6;
-  font-size:0.7rem;
-  font-family:"Montserrat", sans-serif;
-  padding:5px 0 0 5px;  
-  @include desktopstyle() {
-    margin:10px 30px;
-    padding:3px;
-    font-size: 0.8rem;
-  }
-
-  &::placeholder {
-    font-size:0.7rem;
-    font-family:"Montserrat", sans-serif; 
-    margin:5px 0 0 5px;   
-    @include desktopstyle() {
-      font-size:0.8rem;
-    }
-  }
-}
-
-.menu, .updateMenu, .headerMenu {
-    &.inactive {
-    display:none;
-  }
-
-  &.active {
-    display:initial;
-  }
-}
-
-.submissionBox__imageBloc img, .updateMenu img {
-  max-width:100%;
-  @include desktopstyle() {
-      max-width:500px;
-      margin:10px auto;
   }
 }
 </style>

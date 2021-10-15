@@ -57,7 +57,6 @@ header {
     justify-content: space-between;
     align-items: center;
     width:100%;
-      //background: radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
     padding:0;
     margin:0;
     box-shadow: 0 4px 2px -2px darken(rgba(255, 215, 215, 0.15), 80%);
@@ -69,18 +68,17 @@ header {
             height:80px;
             width:200px;
         }
-
     }
 
     & img[alt="Logo Groupomania"] {
-    clip-path: inset(0 80% 0 0);
-    width:180px;
-    position:relative;
-    top:2px;
-    @include desktopstyle() {
-        clip-path:none;
+        clip-path: inset(0 80% 0 0);
+        width:180px;
+        position:relative;
+        top:2px;
+        @include desktopstyle() {
+            clip-path:none;
+        }
     }
-}
 
     & p {
         width:50px;
@@ -93,73 +91,66 @@ header {
         position:relative;
         left:40px;
         top:7px;
-                  border: rgba(128, 128, 128, 0.1) solid 0.5px;
-  box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
-    background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
-    padding:5px;
-    border-radius:50%;
-    width:25px;
-    @include desktopstyle() {
-                left:30px;
-                width:auto;
+        border: rgba(128, 128, 128, 0.1) solid 0.5px;
+        box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
+        background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
+        padding:5px;
+        border-radius:50%;
+        width:25px;
+        @include desktopstyle() {
+            left:30px;
+            width:auto;
+        }
     }
-    }
-}
 
-header svg {
-    //display:none;
-    @include desktopstyle() {
-        //display:initial;
-    }
-}
+    & .profileAccess {
+        display:flex;
+        border: grey solid 1px;
+        width:100px;
+        border-radius:20px;
+        font-size:0.8rem;
+        align-items:center;
+        padding:3px 5px 3px 3px;
+        border: rgba(128, 128, 128, 0.1) solid 0.5px;
+        box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
+        background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
+        font-weight:bold;
+        cursor:pointer;    
 
-header .profileAccess {
-    display:flex;
-    border: grey solid 1px;
-    width:100px;
-    border-radius:20px;
-    font-size:0.8rem;
-    align-items:center;
-    padding:3px 5px 3px 3px;
-          border: rgba(128, 128, 128, 0.1) solid 0.5px;
-  box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
-    background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
-    font-weight:bold;
-    cursor:pointer;
-    
+        & span {
+            padding-left:10px;
 
-    & span {
-        padding-left:10px;
-
+        }
     }
 }
+
 
 .headerMenu {
-  position:absolute;
-  z-index:99;
-  cursor:pointer;
-  @include desktopstyle() {
-      top:75px;
-  right:35px;
-  }
+    position:absolute;
+    z-index:99;
+    cursor:pointer;
+    @include desktopstyle() {
+        top:75px;
+        right:35px;
+    }
 
-  & ul {
-                    border: rgba(128, 128, 128, 0.1) solid 0.5px;
-  box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
-    background:radial-gradient(circle, rgba(254,251,251,1) 0%, rgba(254,251,251,1) 100%);
-    border-radius:3px;
-  }
+    & ul {
+        border: rgba(128, 128, 128, 0.1) solid 0.5px;
+        box-shadow: 1px 2px 5px rgba(128, 128, 128, 0.2);
+        background:radial-gradient(circle, rgba(254,251,251,1) 0%, rgba(254,251,251,1) 100%);
+        border-radius:3px;
+    }
 
-  & ul, a {
-    width:200px;
-    font-size:0.8rem;
-    line-height:1.2rem;
-    text-decoration:none;
-    font-weight:normal;
-  }
+    & ul, a {
+        width:200px;
+        font-size:0.8rem;
+        line-height:1.2rem;
+        text-decoration:none;
+        font-weight:normal;
+    }
 }
 
-//Header
+
 #mainMenu {
   display:flex;
   align-items: baseline;

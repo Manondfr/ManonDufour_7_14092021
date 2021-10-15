@@ -1,6 +1,9 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
 
+axios.defaults.withCredentials = true
+
+
 export default createStore({
   state: {
     firstName: null,
@@ -74,33 +77,65 @@ export default createStore({
       context.commit('LOGIN_PERSONAL_INFORMATIONS');
     },
     getPosts({ commit }) {
-      axios.get('http://localhost:3000/api/publications')
-          .then(response => {
-              commit('SET_POSTS', response.data)
-    })
+     const url = "http://localhost:3000/api/publications/";
+     const authorization = "Bearer " + localStorage.getItem('token');
+      axios({
+        method: 'get',
+        withCredentials:true,
+        headers: {
+        'Authorization' : authorization
+        },
+        url: url,
+      })
+      .then(response => {
+        commit('SET_POSTS', response.data)
+      })
     },
     getPostsByUser({ commit }, userId) {
       console.log(userId);
+      const authorization = "Bearer " + localStorage.getItem('token');
       const url = "http://localhost:3000/api/auth/user/" + userId + "/publications/"
-      axios.get(url)
-          .then(response => {
-              commit('SET_POSTS_BY_USER', response.data)
-    })
+      axios({
+        method: 'get',
+        withCredentials:true,
+        headers: {
+        'Authorization' : authorization
+        },
+        url: url,
+      })
+      .then(response => {
+        commit('SET_POSTS_BY_USER', response.data)
+      })
     },
     getUserInfos({ commit }, userId) {
-      const url = "http://localhost:3000/api/auth/user/" + userId
-      axios.get(url)
-          .then(response => {
-              console.log(response.data);
-              commit('SET_USER_INFOS', response.data)
-    })
+      const url = "http://localhost:3000/api/auth/user/" + userId;
+      const authorization = "Bearer " + localStorage.getItem('token');
+      axios({
+        method: 'get',
+        withCredentials:true,
+        headers: {
+        'Authorization' : authorization
+        },
+        url: url,
+      })
+      .then(response => {
+        commit('SET_USER_INFOS', response.data)
+      })
     },
     getComments({ commit }, publicationId) {
       const url = "http://localhost:3000/api/publications/" + publicationId + "/comments";
-      axios.get(url)
-          .then(response => {
-              commit('SET_COMMENTS', response.data)
-    })
+      const authorization = "Bearer " + localStorage.getItem('token');
+      axios({
+        method: 'get',
+        withCredentials:true,
+        headers: {
+        'Authorization' : authorization
+        },
+        url: url,
+      })
+      .then(response => {
+        commit('SET_COMMENTS', response.data)
+      })
     },
     changeSelectedFile(context, file) {
       context.commit('CHANGE_SELECTED_FILE', file)

@@ -50,6 +50,18 @@ export default {
     }
 }
 
+label {
+  cursor:pointer;
+}
+
+button {
+  background-color: transparent;
+  border:none;
+  cursor:pointer;
+  font-family:"Montserrat", sans-serif;
+  font-size:0.9rem;
+}
+
 .submissionBox {
     padding:20px 0;
     width:50%;
@@ -75,6 +87,10 @@ export default {
 
             & svg {
                 width:15px;
+                fill: rgba(253, 45, 1, 1);
+                position:relative;
+                left: 10px;
+                top: 4px;
                 @include desktopstyle {
                     width:auto;
                 }
@@ -87,6 +103,7 @@ export default {
   width:90%;
   font-size:0.7rem;
   font-family: "Montserrat", sans-serif;  
+  margin:auto;
   @include desktopstyle() {
       font-size:0.9rem;
   }
@@ -96,27 +113,8 @@ hr {
   margin-top: 20px;
 }
 
-// Partie soumission d'une publication
-.submissionBox__publiDivAdd svg {
-  fill: rgba(253, 45, 1, 1);
-  position:relative;
-  left: 10px;
-  top: 4px;
-}
 
 #inputFile, .inputUpdateFile, #inputUpdateProfilePicture {
   display:none;
-}
-
-label {
-  cursor:pointer;
-}
-
-button {
-  background-color: transparent;
-  border:none;
-  cursor:pointer;
-  font-family:"Montserrat", sans-serif;
-  font-size:0.9rem;
 }
 </style>

@@ -15,6 +15,9 @@
 const axios = require('axios').default;
 import HeaderContent from '../components/HeaderContent.vue'
 import LoginBox from '../components/LoginBox.vue'
+//var Vue = require('vue')
+//Vue.use(require('vue-cookies'))
+axios.defaults.withCredentials = true
 
 export default {
 	name: 'App',
@@ -31,6 +34,7 @@ export default {
     }
     axios({
       method: 'post',
+      withCredentials:true,
       headers: {
       'Content-Type': 'application/json'
       },
@@ -45,6 +49,8 @@ export default {
     localStorage.setItem('admin', res.data.admin);
     localStorage.setItem('token', res.data.token);
     window.location.href = "http://localhost:8080/#/homepage";
+    //document.cookie = "username=John Doe;max-age=86400 * 1000";
+    //this.$cookies.set('user','user');
     })
     .catch(function() {                
         alert("La connexion a échoué")});                
@@ -53,11 +59,32 @@ export default {
 </script>
 
 <style lang="scss">
+@mixin tabletstyle {
+    @media all and (min-width:483px){
+        @content;
+    }
+}
+
+@mixin desktopstyle {
+    @media all and (min-width:993px){
+        @content;
+    }
+}
+
 body {
   margin:0;
   padding:0;
   background: url("../assets/icon.png") no-repeat top center fixed; 
   background-size: 800px;
   height:800px;
+}
+
+button {
+    font-family:"Montserrat", sans-serif;
+    font-size:0.8rem;
+    font-weight:bold;
+    @include desktopstyle() {
+      font-size:0.8rem;
+    }
 }
 </style>

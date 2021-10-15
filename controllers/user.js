@@ -6,6 +6,8 @@ const Publication = require('../models/Publication');
 const passwordValidator = require('password-validator');
 const schema = new passwordValidator();
 const fs = require('fs');
+//const { default: store } = require("../frontend/frontend/src/store");
+
 
 
 //schema.is().min(5).has().uppercase().has().digits(1).has().not().spaces();
@@ -57,24 +59,7 @@ exports.signup = (req, res, next) => {
   }
 };
 
-exports.signout = (req, res, next) => {
-  if(schema.validate(req.body.password)) {
-    bcrypt.hash(req.body.password, 10)
-    .then(hash => {
-      User.create({
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: /*MaskData.maskEmail2(*/req.body.email/*, emailMaskOptions)*/,
-        password: hash
-      })
-      .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-      .catch(error => res.status(400).json({ error }));
-    })
-    .catch(error => res.status(500).json({ error }))
-  } else if(!schema.validate(req.body.password)) {
-    return res.status(400).json({ error });
-  }
-};
+
 
 exports.login = (req, res, next) => {
   User.findOne({ where: {email: req.body.email} })
@@ -87,7 +72,9 @@ exports.login = (req, res, next) => {
           if (!valid) {
             return res.status(401).json({ error });
           }
-          res.cookie(`Cookie`,jwt.sign({ userId:user.id }, 'RANDOM_TOKEN_SECRET'),{ maxAge: 86400 * 1000, httpOnly: true });
+          req.session.userId = user.id;  
+            console.log(req.sessionID); 
+            //store.get()
           res.status(200).json({
             userId: user.id,
             admin: user.admin,
@@ -96,8 +83,7 @@ exports.login = (req, res, next) => {
               'RANDOM_TOKEN_SECRET',
               { expiresIn: '24h' }
             ),
-            cookie: req.cookies
-          });
+          }).end();
         })
         .catch(error => res.status(500).json({ error }));
     })
@@ -105,7 +91,6 @@ exports.login = (req, res, next) => {
   };
 
   exports.getOneUser = (req, res, next) => {
-    console.log(req.cookies.Cookie);
     User.findOne({ where: { id: req.params.id }})
     .then(
         (user) => {
@@ -185,5 +170,15 @@ exports.login = (req, res, next) => {
     })
     .catch(error => res.status(404).json({ error }));
   };
+
+  exports.logout = (req, res, next) => {
+    req.session.destroy()
+    .then(
+      () => res.clearCookie('hello')
+      .then(() => res.status(200).message({message : 'Utilisateur déconnecté !'}))
+      .catch(error => res.status(400).json({ error }))
+    )
+    .catch(error => res.status(400).json({ error }));
+  }
       
     
