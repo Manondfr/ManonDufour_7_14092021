@@ -1,6 +1,6 @@
 const User = require('./User');
 const Publication = require('./Publication');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize } = require('sequelize');
 const sequelize = require('../connexion');
 
 
@@ -17,7 +17,6 @@ const Comment = sequelize.define('comment', {
 User.hasMany(Comment, { foreignKey: 'user_id' }, {onDelete: 'CASCADE'});
 Publication.hasMany(Comment, { foreignKey: 'publication_id' }, {onDelete: 'CASCADE'});
 Comment.belongsTo(User, {foreignKey: 'user_id'});
-//Comment.belongsTo(User, {foreignKey: 'publication_id'});
 
 
 async() => {

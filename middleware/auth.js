@@ -1,33 +1,22 @@
+const RAN_TOKEN = process.env.RAN_TOKEN;
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
   try {
-    if(!req.session.userId) {
-      console.log('yeeees')
-      //res.send('http://localhost:8080/#/login')
-    } else {
-      next()
+    if(!req.session.accessToken) {
+      return res.status(401).json({ message: 'Missing token in cookie' });
     }
-  } catch {
-    res.status(401).json({
-      error: new Error('Invalid request!')
-    });
-  }
-}
-
-module.exports = (req, res, next) => {
-  try {
-    if(req.session.userId) {
-      console.log(req.sessionID); 
-    } else {
-      console.log('no')
+    if (!req.headers || !req.headers['x-xsrf-token']) {
+      return res.status(401).json({ message: 'Missing XSRF token in headers' });
     }
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    const userId = decodedToken.userId;
+    const xsrfToken = req.headers['x-xsrf-token'];
+    const decodedToken = jwt.verify(req.session.accessToken, RAN_TOKEN);
+    if (xsrfToken !== decodedToken.xsrfToken) {
+      return res.status(401).json({ message: 'Bad xsrf token' });
+    }
+    const userId = decodedToken.userId
     if (req.body.userId && req.body.userId !== userId) {
       throw 'Invalid user ID';
-
     } else {
       next();
     }
@@ -37,5 +26,3 @@ module.exports = (req, res, next) => {
     });
   }
 };
-
-

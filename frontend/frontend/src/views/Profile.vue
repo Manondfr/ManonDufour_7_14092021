@@ -126,12 +126,13 @@ export default {
   },
   fetchComments(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
-    const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     axios({
       method: 'get',
       headers: {
       'Content-Type': 'application/json',
-      'Authorization' : authorization
+      'x-xsrf-token' : xsrfToken
       },
       url:url
     })
@@ -147,12 +148,13 @@ export default {
   },
     updateCommentContent(dataId, commentId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments/" + commentId;
-    const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     axios({
       method: 'put',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization' : authorization
+        'x-xsrf-token' : xsrfToken
       },
       url: url,
       data: {               "commentContent" : event.target.value,
@@ -175,11 +177,12 @@ export default {
   deleteComment(dataId, commentId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments/" + commentId;
     const commentToDelete = document.querySelector(`.commentSection[data-id="${commentId}"]`);
-    const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     axios({
       method: 'delete',
       headers: {
-        'Authorization' : authorization
+        'x-xsrf-token' : xsrfToken
       },
       url: url,
     })
@@ -198,13 +201,14 @@ export default {
     console.log(event.target.value);
     const url = "http://localhost:3000/api/publications/" + dataId + "/comments";
     console.log(url);
-    const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     const Id = Number(localStorage.getItem('userId'));
     axios({
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization' : authorization
+        'x-xsrf-token' : xsrfToken
       },
       url: url,
       data: { "userId" : Id,
@@ -225,13 +229,14 @@ export default {
   },
 addLike(dataId) {
     const url = "http://localhost:3000/api/publications/" + dataId + "/like";
-    const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     const Id = Number(localStorage.getItem('userId'));
     axios({
       method: 'post',
       headers: {
       'Content-Type': 'application/json',
-      'Authorization' : authorization
+      'x-xsrf-token' : xsrfToken
       },
       url: url,
       data: { "userId" : Id }
@@ -276,12 +281,13 @@ addLike(dataId) {
     }
     fd.append('content', store.state.content);
     fd.append('userId', localStorage.getItem('userId'));
-    const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     axios({
       method: 'post',
       headers: {
       'Content-Type': 'application/json',
-      'Authorization' : authorization
+      'x-xsrf-token' : xsrfToken
       },
       url: 'http://localhost:3000/api/publications',
       data: fd
@@ -328,11 +334,12 @@ addLike(dataId) {
     this.showMenu(dataId);
     let divToDelete = document.querySelector(`.publications__each[data-id="${dataId}"]`);
     const url = "http://localhost:3000/api/publications/" + dataId;
-    const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     axios({
       method: 'delete',
       headers: {
-        'Authorization' : authorization,
+        'x-xsrf-token' : xsrfToken,
       },
       url: url,
     })
@@ -345,7 +352,8 @@ addLike(dataId) {
   this.showUpdateMenu(dataId);  
   this.showMenu(dataId);
   const url = "http://localhost:3000/api/publications/" + dataId;
-  const authorization = "Bearer " + localStorage.getItem('token');
+  let xsrfToken = localStorage.getItem('xsrfToken');
+  xsrfToken = JSON.parse(xsrfToken);
   const fd = new FormData;
   let textArea = document.querySelector(`.publicationsContent[data-id="${dataId}"] textarea[data-id="${dataId}"]`);
   if(document.querySelector(`.updateMenu[data-id="${dataId}"] img[data-id="${dataId}"]`).src !== "" && store.state.selectedFile) {
@@ -356,7 +364,7 @@ addLike(dataId) {
   axios({
   method: 'put',
   headers: {
-    'Authorization' : authorization
+    'x-xsrf-token' : xsrfToken
   },
   url: url,
   data: fd
@@ -385,11 +393,12 @@ addLike(dataId) {
   },
     deleteAccount() {
     const url = "http://localhost:3000/api/auth/user/" + localStorage.getItem("userId");
-      const authorization = "Bearer " + localStorage.getItem('token');
+    let xsrfToken = localStorage.getItem('xsrfToken');
+    xsrfToken = JSON.parse(xsrfToken);
     axios({
       method: 'delete',
       headers: {
-        'Authorization': authorization
+        'x-xsrf-token': xsrfToken
       },
       url: url,
     })
@@ -405,7 +414,8 @@ addLike(dataId) {
   },
               saveNewInfos() {
             const url = "http://localhost:3000/api/auth/user/" + window.location.href.slice(window.location.href.indexOf("e") + 2);
-            const authorization = "Bearer " + localStorage.getItem('token');
+            let xsrfToken = localStorage.getItem('xsrfToken');
+            xsrfToken = JSON.parse(xsrfToken);  
             const fd = new FormData;
             if(store.state.profilePicture instanceof Blob) {
               fd.append('profilePicture', store.state.profilePicture, store.state.profilePicture.name);                                      
@@ -421,7 +431,7 @@ addLike(dataId) {
             axios({
             method: 'put',
             headers: {
-            'Authorization' : authorization
+            'x-xsrf-token' : xsrfToken
             },
             url: url,
             data: fd

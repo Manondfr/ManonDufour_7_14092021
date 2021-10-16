@@ -48,10 +48,8 @@ export default {
         }  
     localStorage.setItem('userId', res.data.userId);
     localStorage.setItem('admin', res.data.admin);
-    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('xsrfToken', JSON.stringify(res.data.xsrfToken));
     window.location.href = "http://localhost:8080/#/homepage";
-    //document.cookie = "username=John Doe;max-age=86400 * 1000";
-    //this.$cookies.set('user','user');
     })
     .catch(function() {                
         alert("La connexion a échoué")});                

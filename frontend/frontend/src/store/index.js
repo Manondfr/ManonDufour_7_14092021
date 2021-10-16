@@ -20,7 +20,7 @@ export default createStore({
     about:null,
     profilePicture:null,
     userId: localStorage.getItem('userId'),
-    admin: localStorage.getItem('admin')
+    admin: localStorage.getItem('admin'),
   },
   mutations: {
     CHANGE_PERSONAL_INFORMATIONS(state) {
@@ -78,12 +78,13 @@ export default createStore({
     },
     getPosts({ commit }) {
      const url = "http://localhost:3000/api/publications/";
-     const authorization = "Bearer " + localStorage.getItem('token');
+     let xsrfToken = localStorage.getItem('xsrfToken');
+     xsrfToken = JSON.parse(xsrfToken);
       axios({
         method: 'get',
         withCredentials:true,
         headers: {
-        'Authorization' : authorization
+        'x-xsrf-token' : xsrfToken,
         },
         url: url,
       })
@@ -97,13 +98,14 @@ export default createStore({
     },
     getPostsByUser({ commit }, userId) {
       console.log(userId);
-      const authorization = "Bearer " + localStorage.getItem('token');
-      const url = "http://localhost:3000/api/auth/user/" + userId + "/publications/"
+      const url = "http://localhost:3000/api/auth/user/" + userId + "/publications/";
+      let xsrfToken = localStorage.getItem('xsrfToken');
+      xsrfToken = JSON.parse(xsrfToken);
       axios({
         method: 'get',
         withCredentials:true,
         headers: {
-        'Authorization' : authorization
+        'x-xsrf-token' : xsrfToken,
         },
         url: url,
       })
@@ -113,12 +115,13 @@ export default createStore({
     },
     getUserInfos({ commit }, userId) {
       const url = "http://localhost:3000/api/auth/user/" + userId;
-      const authorization = "Bearer " + localStorage.getItem('token');
+      let xsrfToken = localStorage.getItem('xsrfToken');
+      xsrfToken = JSON.parse(xsrfToken);
       axios({
         method: 'get',
         withCredentials:true,
         headers: {
-        'Authorization' : authorization
+        'x-xsrf-token' : xsrfToken,
         },
         url: url,
       })
@@ -128,12 +131,13 @@ export default createStore({
     },
     getComments({ commit }, publicationId) {
       const url = "http://localhost:3000/api/publications/" + publicationId + "/comments";
-      const authorization = "Bearer " + localStorage.getItem('token');
+      let xsrfToken = localStorage.getItem('xsrfToken');
+      xsrfToken = JSON.parse(xsrfToken);
       axios({
         method: 'get',
         withCredentials:true,
         headers: {
-        'Authorization' : authorization
+        'x-xsrf-token' : xsrfToken,
         },
         url: url,
       })

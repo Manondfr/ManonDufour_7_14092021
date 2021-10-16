@@ -1,6 +1,6 @@
 exports.redirectLoginPage = (req, res, next) => {
   try {
-    if(!req.session.userId) {
+    if(!req.session.accessToken) {
       res.send('http://localhost:8080/#/login')
     } else {
       next()
@@ -14,7 +14,7 @@ exports.redirectLoginPage = (req, res, next) => {
 
 exports.redirectHomePage = (req, res, next) => {
   try {
-    if(req.session.userId) {
+    if(req.session.accessToken) {
       res.send('http://localhost:8080/#/homepage')
     } else {
       res.send({ message : 'Utilisateur non connecté' })

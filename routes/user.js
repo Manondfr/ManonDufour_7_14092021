@@ -18,5 +18,4 @@ router.get('/user/:id', session.redirectLoginPage, auth, userCtrl.getOneUser);
 router.get('/user/:id/publications', session.redirectLoginPage, auth, userCtrl.getPublicationsByUser);
 
 
-
 module.exports = router;

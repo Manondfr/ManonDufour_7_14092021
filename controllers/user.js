@@ -1,4 +1,4 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
+const { Sequelize } = require("sequelize");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
@@ -6,12 +6,13 @@ const Publication = require('../models/Publication');
 const passwordValidator = require('password-validator');
 const schema = new passwordValidator();
 const fs = require('fs');
-//const { default: store } = require("../frontend/frontend/src/store");
+
+var crypto = require('crypto');
+const RAN_TOKEN = process.env.RAN_TOKEN;
+const EXPRESS_SESSION_NAME = process.env.EXPRESS_SESSION_NAME;
 
 
-
-//schema.is().min(5).has().uppercase().has().digits(1).has().not().spaces();
-schema.is().min(1);
+schema.is().min(5).has().uppercase().has().digits(1).has().symbols(1).has().not().spaces();
 
 /*const emailMaskOptions = {
   maskWith: "*", 
@@ -72,18 +73,16 @@ exports.login = (req, res, next) => {
           if (!valid) {
             return res.status(401).json({ error });
           }
-          req.session.userId = user.id;  
-            console.log(req.sessionID); 
-            //store.get()
+          const xsrfToken = crypto.randomBytes(64).toString('hex');
+          const accessToken = jwt.sign( { userId: user.id, xsrfToken }, RAN_TOKEN, { expiresIn: '24h' } );
+          req.session.accessToken = accessToken; 
+          console.log(req.sessionID); 
+          console.log(req.session.accessToken);
           res.status(200).json({
-            userId: user.id,
-            admin: user.admin,
-            token: jwt.sign(
-              { userId: user.id },
-              'RANDOM_TOKEN_SECRET',
-              { expiresIn: '24h' }
-            ),
-          }).end();
+              xsrfToken : xsrfToken,
+              admin: user.admin,
+              userId: user.id
+          })
         })
         .catch(error => res.status(500).json({ error }));
     })
@@ -177,7 +176,7 @@ exports.login = (req, res, next) => {
       if (err) {
         return res.send('http://localhost:8080/#/homepage')
       }
-      res.clearCookie('hello');
+      res.clearCookie(EXPRESS_SESSION_NAME);
       return res.send('http://localhost:8080/#/login')
     })
   }
