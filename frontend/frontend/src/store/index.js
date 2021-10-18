@@ -12,6 +12,7 @@ export default createStore({
     password: null,
     posts: [],
     comments: [],
+    connectedUser: [],
     selectedFile:null,
     content: null,
     gender:null,
@@ -20,7 +21,7 @@ export default createStore({
     about:null,
     profilePicture:null,
     userId: localStorage.getItem('userId'),
-    admin: localStorage.getItem('admin'),
+    admin: null,
   },
   mutations: {
     CHANGE_PERSONAL_INFORMATIONS(state) {
@@ -49,6 +50,18 @@ export default createStore({
       state.birthday = infos.birthday;
       state.about = infos.about;
       state.profilePicture = infos.profilePicture;
+      state.userId = infos.id
+    },
+    SET_CONNECTED_USER_INFOS(state, infos) {
+      state.connectedUser.lastName = infos.last_name;
+      state.connectedUser.firstName = infos.first_name;
+      state.connectedUser.gender = infos.gender;
+      state.connectedUser.occupation = infos.occupation;
+      state.connectedUser.birthday = infos.birthday;
+      state.connectedUser.about = infos.about;
+      state.connectedUser.profilePicture = infos.profilePicture;
+      state.connectedUser.id = infos.id;
+      state.connectedUser.admin = infos.admin
     },
     SET_COMMENTS(state, comments) {
       state.comments = comments
@@ -62,7 +75,7 @@ export default createStore({
       console.log(state.selectedFile);
     },
     CHANGE_PROFILE_PICTURE(state, file) {
-      state.profilePicture = file;
+      state.connectedUser.profilePicture = file;
     },
 
     CHANGE_CONTENT(state, value) {
@@ -127,6 +140,22 @@ export default createStore({
       })
       .then(response => {
         commit('SET_USER_INFOS', response.data)
+      })
+    },
+    getConnectedUserInfos({ commit }, userId) {
+      const url = "http://localhost:3000/api/auth/user/" + userId;
+      let xsrfToken = localStorage.getItem('xsrfToken');
+      xsrfToken = JSON.parse(xsrfToken);
+      axios({
+        method: 'get',
+        withCredentials:true,
+        headers: {
+        'x-xsrf-token' : xsrfToken,
+        },
+        url: url,
+      })
+      .then(response => {
+        commit('SET_CONNECTED_USER_INFOS', response.data)
       })
     },
     getComments({ commit }, publicationId) {

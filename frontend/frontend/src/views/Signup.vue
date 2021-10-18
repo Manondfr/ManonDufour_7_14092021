@@ -72,14 +72,6 @@ export default {
     }
 }
 
-body {
-  margin:0;
-  padding:0;
-  background: url("../assets/icon.png") no-repeat top center fixed; 
-  background-size: 800px;
-  height:800px;
-}
-
 button {
     font-family:"Montserrat", sans-serif;
     font-size:0.8rem;

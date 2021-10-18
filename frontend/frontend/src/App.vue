@@ -63,6 +63,14 @@ a {
   border: 0;
 }
 
+body {
+  margin:0;
+  padding:0;
+  background: url("./assets/icon.png") no-repeat top center fixed; 
+  background-size: 800px;
+  height:800px;
+}
+
 h1 {
   margin: 20px 10px 15px 10px;
   font-size:1rem;
@@ -105,6 +113,7 @@ main p {
 }
 
 .postCommentTextArea {
+  margin:0 auto;
   width:95%;
   border-radius:5px;
   border:none;
@@ -113,7 +122,6 @@ main p {
   font-family:"Montserrat", sans-serif;
   padding:5px 0 0 5px;  
   @include desktopstyle() {
-    margin:10px 30px;
     padding:3px;
     font-size: 0.8rem;
   }
@@ -125,6 +133,14 @@ main p {
     @include desktopstyle() {
       font-size:0.8rem;
     }
+  }
+}
+
+.commentContentSection textarea {
+  margin:0;
+  position:relative;
+  @include desktopstyle() {
+    left:-30px;
   }
 }
 

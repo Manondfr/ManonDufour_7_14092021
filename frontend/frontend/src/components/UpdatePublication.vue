@@ -23,7 +23,7 @@ export default {
     <div class="updateMenu inactive" v-bind:data-id="postId">
         <div class="updateMenu__headers">
             <h2>Mettre à jour la publication</h2>
-            <button aria-label="Fermeture du menu de modification de la publication" class="closeButton" @click="updateMenu">X</button>
+            <button aria-label="Fermeture du menu de modification de la publication" class="closeButton" @click="updateMenu" >X</button>
         </div>
         <slot name="publicationsContent"></slot>        
         <div class="updateMenu__buttons">

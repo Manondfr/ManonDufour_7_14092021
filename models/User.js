@@ -13,7 +13,7 @@ const User = sequelize.define('user', {
     birthday: { type: Sequelize.DATEONLY, allowNull:true },
     occupation: { type: Sequelize.STRING(35), allowNull:true },
     about: { type: Sequelize.STRING(250), allowNull:true },
-    profilePicture: { type: Sequelize.STRING, allowNull:false, defaultValue:"http://localhost:3000/images/nouser.jpg"},
+    profilePicture: { type: Sequelize.STRING, allowNull:false, defaultValue:"http://localhost:3000/src/assets/nouser.jpg"},
     admin: { type: Sequelize.BOOLEAN, allowNull:false, defaultValue:false }
   },
         {tableName: 'Users', timestamps: true}

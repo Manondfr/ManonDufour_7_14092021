@@ -19,6 +19,7 @@ export default {
     <div class="menu inactive" v-bind:id="'menu'+postId" v-bind:data-id="postId">
         <ul>
             <li v-bind:data-id="postId" @click="updateMenu"><button>Modifier la publication</button></li>
+            <slot name="updateMenu"></slot>
             <li tabindex="0" v-bind:data-id="postId" @click="deletePublication"><button>Supprimer la publication</button></li>
         </ul>
     </div>

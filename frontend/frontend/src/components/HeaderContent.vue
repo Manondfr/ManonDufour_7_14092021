@@ -3,9 +3,9 @@ export default {
 	name: 'HeaderContent',
     props: {
         condition:Boolean,
-        profilePicture:String,
+        profilePicture:[File, String],
         name:String,
-        userId:String,
+        userId:Number,
     },
     methods: {
         showHeaderMenu() {
@@ -13,7 +13,7 @@ export default {
         },  
         logout() {
             this.$emit('logout')
-        }      
+        },     
     }
 }
 </script>
@@ -132,10 +132,8 @@ header {
     position:absolute;
     z-index:99;
     cursor:pointer;
-    @include desktopstyle() {
-        top:75px;
-        right:35px;
-    }
+    top:55px;
+    right:25px;
 
     & ul {
         border: rgba(128, 128, 128, 0.1) solid 0.5px;

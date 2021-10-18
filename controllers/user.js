@@ -139,23 +139,52 @@ exports.login = (req, res, next) => {
       occupation: req.body.occupation, 
       about: req.body.about,     
      };
-    User.update({
-      ...userObject
-    }, { where: { id: req.params.id }})
-    .then(
-      () => {
-        res.status(200).json({
-          message: 'Utilisateur mis à jour !'
-        });
-      }
-    )
-    .catch(
-      (error) => {
-        res.status(400).json({
-          error: error
-        });
-      }
-    )
+     User.findOne({ where: { id: req.params.id } })
+     .then(
+       user => {
+         if(req.file) {
+          const filename = user.profilePicture.split('/images/')[1];     
+          fs.unlink(`images/${filename}`, () => {
+            User.update({
+              ...userObject
+            }, { where: { id: req.params.id }})
+            .then(
+             () => {
+               res.status(200).json({
+                 message: 'Utilisateur mis à jour !'
+               });
+             }
+           )
+           .catch(
+             (error) => {
+               res.status(400).json({
+                 error: error
+               });
+             }
+           )
+          })      
+         } else {
+          User.update({
+            ...userObject
+          }, { where: { id: req.params.id }})
+          .then(
+            () => {
+              res.status(200).json({
+                message: 'Utilisateur mis à jour !'
+              });
+            }
+          )
+          .catch(
+            (error) => {
+              res.status(400).json({
+                error: error
+              });
+            }
+          )           
+         }
+       }
+     )
+     .catch(error => res.status(404).json({ error }));
   };
 
   exports.deleteUser = (req, res, next) => {
@@ -163,6 +192,12 @@ exports.login = (req, res, next) => {
     .then(user => {
         const filename = user.profilePicture.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {
+          req.session.destroy(err => {
+            if (err) {
+              return res.send('http://localhost:8080/#/homepage')
+          }
+          res.clearCookie(EXPRESS_SESSION_NAME);
+          });
           user.destroy({ where: { id: req.params.id }})
           .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
           .catch(error => res.status(400).json({ error }));

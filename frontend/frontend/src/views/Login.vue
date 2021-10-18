@@ -47,7 +47,6 @@ export default {
         return res.json();
         }  
     localStorage.setItem('userId', res.data.userId);
-    localStorage.setItem('admin', res.data.admin);
     localStorage.setItem('xsrfToken', JSON.stringify(res.data.xsrfToken));
     window.location.href = "http://localhost:8080/#/homepage";
     })
@@ -64,7 +63,8 @@ export default {
       if(response.data == 'http://localhost:8080/#/homepage') {
         window.location.href = response.data
       } 
-    })
+    })              
+  .catch(error => console.log(error)); 
   }
 }
 </script>
@@ -82,13 +82,7 @@ export default {
     }
 }
 
-body {
-  margin:0;
-  padding:0;
-  background: url("../assets/icon.png") no-repeat top center fixed; 
-  background-size: 800px;
-  height:800px;
-}
+
 
 button {
     font-family:"Montserrat", sans-serif;

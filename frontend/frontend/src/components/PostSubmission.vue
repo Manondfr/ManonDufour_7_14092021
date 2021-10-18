@@ -69,7 +69,7 @@ button {
     margin: auto;
       border: rgba(128, 128, 128, 0.1) solid 0.5px;
   box-shadow: 1px 2px 10px rgba(128, 128, 128, 0.2);
-    background:radial-gradient(circle, rgba(254,251,251,0.8) 0%, rgba(254,251,251,0.4) 100%);
+    background:radial-gradient(circle, rgba(254,251,251,1) 0%, rgba(254,251,251,0.7) 100%);
 
     
     &__publiDiv {
