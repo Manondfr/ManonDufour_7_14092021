@@ -95,6 +95,14 @@ export default {
     padding: 5px 15px;
   }
 
+  & .publicationsContent__userInfo__userName {
+      background-color:transparent;
+      margin:0;
+      padding:0;
+      height:auto;
+      cursor:auto;
+  }
+
   & .closeButton {
     border-radius:0;
     height:20px;

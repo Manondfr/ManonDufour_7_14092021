@@ -13,7 +13,7 @@
           <article class="publications__each" v-for='post in posts' :key='post.id' v-bind:data-id="post.id">  
 
             <!-- Corps de la publication -->
-            <PublicationsContent @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)" @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || $store.state.connectedUser.admin == 1" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content">
+            <PublicationsContent @visitProfile="visitProfile(post.user.id)" @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)" @inputAutofocus="inputAutofocus(post.id)" @addLike="addLike(post.id)" @showMenu="showMenu(post.id)" v-bind:condition="fetchUserId == post.user_id || $store.state.connectedUser.admin == 1" v-bind:name="post.user.first_name + ' ' + post.user.last_name" v-bind:date="formattingDate(post.date_col_formed)" v-bind:profilePicture="post.user.profilePicture" v-bind:postId="post.id" v-bind:postImage="post.image" v-bind:postLikes="post.likes" v-bind:postContent="post.content">
                 <!-- On clic : Menu modification/suppression -->
                 <template v-slot:updateDeleteMenu>
                   <UpdateDeleteMenu v-bind:postId="post.id" @showUpdateMenu="showUpdateMenu(post.id)" @deletePublication="deletePublication(post.id)">

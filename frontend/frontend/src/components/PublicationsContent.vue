@@ -23,6 +23,9 @@ export default {
     },
     inputAutofocus() {
       this.$emit('inputAutofocus')
+    },
+    visitProfile() {
+      this.$emit('visitProfile')
     } 
   }
 }
@@ -36,7 +39,7 @@ export default {
           <img v-bind:src="profilePicture" alt="Photo de profil utilisateur"/>
         </div>
         <div class="publicationsContent__userInfo__nameDate">
-          <p class="publicationsContent__userName">{{ name }}</p>
+          <button @click="visitProfile" class="publicationsContent__userInfo__userName">{{ name }}</button>
           <p>{{ date }}</p>
         </div>
       </div>
@@ -82,6 +85,7 @@ export default {
     padding:0;
     margin:5px 0 0 0;
     font-weight:bold;
+    background-color:transparent;
     @include desktopstyle() {
       font-size:1rem;
     }
