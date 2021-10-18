@@ -1,4 +1,6 @@
 <script>
+const axios = require('axios').default;
+axios.defaults.withCredentials = true;
 export default {
 	name: 'HeaderContent',
     props: {
@@ -8,12 +10,37 @@ export default {
         userId:Number,
     },
     methods: {
-        showHeaderMenu() {
-            this.$emit('showHeaderMenu')
-        },  
-        logout() {
-            this.$emit('logout')
-        },     
+    // AFFICHAGE DU MENU DU HEADER POUR ACCES AU PROFIL OU DECONNEXION
+    showHeaderMenu() {
+        let menu = document.querySelector(`.headerMenu`);
+        if(menu.classList.contains("active")) {
+            menu.classList.replace("active", "inactive");
+            menu.setAttribute("aria-expanded", "false");
+        } else {
+            menu.classList.replace("inactive", "active");
+            menu.setAttribute("aria-expanded", "true");
+        }
+    },
+    // DECONNEXION UTILISATEUR
+    logout() {
+        const url = "http://localhost:3000/api/auth/logout";
+        let xsrfToken = localStorage.getItem('xsrfToken');
+        xsrfToken = JSON.parse(xsrfToken);
+        axios({
+            method: 'post',
+            headers: {
+                'x-xsrf-token': xsrfToken
+            },
+            url:url
+        })
+        .then(function() {
+            localStorage.clear();
+            window.location.href = "http://localhost:8080/#/login"
+        })
+        .catch(function() {                
+            alert("Une erreur est survenue lors de la déconnexion");                
+        });
+    },  
     }
 }
 </script>

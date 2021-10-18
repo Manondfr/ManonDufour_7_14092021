@@ -45,14 +45,11 @@ export default {
         url: 'http://localhost:3000/api/auth/signup',
         data: JSON.stringify(body)
         })
-        .then(function(res) {
-        if (res.ok) {
-        return res.json();
-        }
-        alert("Félicitations, votre compte a bien été créé ! Vous pouvez désormais vous connecter à votre compte")
+        .then(function() {
+          alert("Félicitations, votre compte a bien été créé ! Vous pouvez désormais vous connecter à votre compte")
         })
         .catch(function() {                
-        alert("Une erreur est survenue lors de l'envoi des données")});                    
+          alert("Une erreur est survenue lors de l'envoi des données")});                    
       }
     }
   }} 
