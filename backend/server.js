@@ -2,7 +2,7 @@ const http = require('http');
 const app = require('./app');
 
 const db = require("./connexion");
-db.sequelize.sync();
+db.sync();
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
