@@ -11,14 +11,14 @@
         </div>
         <h1>{{ $store.state.firstName}} {{ $store.state.lastName }}</h1>
         <div class='userInfos__paragraphs'>
-          <h2 v-show="$store.state.gender !== null && $store.state.gender !== ''">Genre :</h2>
-          <p v-show="$store.state.gender !== null && $store.state.gender !== ''" id="genderParagraph"> {{ $store.state.gender == "F"?"Femme":"Homme" }} </p>
-          <h2 v-show="$store.state.occupation !== null && $store.state.occupation !== ''">Poste :</h2>
-          <p v-show="$store.state.occupation !== null && $store.state.occupation !== ''" id="occupationParagraph"> {{ $store.state.occupation }} </p>
-          <h2 v-show="$store.state.birthday !== null && $store.state.birthday !== 'Invalid Date'">Date de naissance :</h2>
-          <p v-show="$store.state.birthday !== null && $store.state.birthday !== 'Invalid Date'" id="birthdayParagraph"> {{ formattingBirthday($store.state.birthday) }} </p>
-          <h2 v-show="$store.state.about !== null && $store.state.about !== ''">A propos :</h2>
-          <p v-show="$store.state.about !== null && $store.state.about !== ''" id="aboutParagraph">{{ $store.state.about }}</p>
+          <h2 v-show="$store.state.gender !== null && $store.state.gender !== ''" class="genderParagraph">Genre :</h2>
+          <p v-show="$store.state.gender !== null && $store.state.gender !== ''" class="genderParagraph" id="genderParagraph"> {{ $store.state.gender == "F"?"Femme":"Homme" }} </p>
+          <h2 v-show="$store.state.occupation !== null && $store.state.occupation !== ''" class="occupationParagraph" >Poste :</h2>
+          <p v-show="$store.state.occupation !== null && $store.state.occupation !== ''" class="occupationParagraph" id="occupationParagraph"> {{ $store.state.occupation }} </p>
+          <h2 v-show="$store.state.birthday !== null && $store.state.birthday !== 'Invalid Date'" class="birthdayParagraph">Date de naissance :</h2>
+          <p v-show="$store.state.birthday !== null && $store.state.birthday !== 'Invalid Date'" class="birthdayParagraph" id="birthdayParagraph"> {{ formattingBirthday($store.state.birthday) }} </p>
+          <h2 v-show="$store.state.about !== null && $store.state.about !== ''" class="aboutParagraph">A propos :</h2>
+          <p v-show="$store.state.about !== null && $store.state.about !== ''" class="aboutParagraph" id="aboutParagraph">{{ $store.state.about }}</p>
         </div>
         <button v-if="$route.path == '/profile/' + fetchUserId || $store.state.connectedUser.admin == 1" @click="showUpdateInfosMenu" id="updateInfosButton">Modifier mes informations personnelles</button>
         
@@ -157,6 +157,8 @@ export default {
 
   // SAUVEGARDE DES NOUVELLES INFORMATIONS UTILISATEUR
   saveNewInfos() {
+    // Génération FormData et requête POST
+    console.log(document.querySelector('#birthday').value);
     const url = "http://localhost:3000/api/auth/user/" + window.location.href.slice(window.location.href.indexOf("e") + 2);
     let xsrfToken = localStorage.getItem('xsrfToken');
     xsrfToken = JSON.parse(xsrfToken);  
@@ -186,21 +188,47 @@ export default {
       return response.data
     })
     .catch(error => console.log(error)); 
+    // Gestion de l'affichage des paragraphes "gender"
+    this.showParagraph('gender');
     document.querySelector(".userInfos #genderParagraph").textContent = document.querySelector("#gender").options[document.querySelector("#gender").selectedIndex].textContent;
-    document.querySelector(".userInfos #genderParagraph").style.display = 'initial';
+    // Gestion de l'affichage des paragraphes "occupation"
+    this.showParagraph('occupation');
     document.querySelector(".userInfos #occupationParagraph").textContent = document.querySelector("#occupation").value;
+    // Gestion de l'affichage des paragraphes "about"
+    this.showParagraph('about');
+    document.querySelector(".userInfos #aboutParagraph").textContent = document.querySelector("#about").value;
+    // Gestion de l'affichage des paragraphes "birthday"
     document.querySelector(".userInfos #birthdayParagraph").textContent = this.formattingBirthday(document.querySelector("#birthday").value);
     if(document.querySelector("#birthdayParagraph").textContent !== "Invalid Date") {
-      document.querySelector(".userInfos #birthdayParagraph").style.display = 'initial';             
+      document.querySelectorAll(".birthdayParagraph").forEach(paragraph => {
+        paragraph.style.display = "inherit"
+      })           
+    } else {
+      document.querySelectorAll(".birthdayParagraph").forEach(paragraph => {
+        paragraph.style.display = "none"
+      })
     }
-    document.querySelector(".userInfos #aboutParagraph").textContent = document.querySelector("#about").value;
+    // Gestion de l'affichage de la photo de profil
     if(store.state.connectedUser.profilePicture  && typeof store.state.connectedUser.profilePicture !== "string") {
       document.querySelector("header .profileAccess img").setAttribute('src', URL.createObjectURL(store.state.connectedUser.profilePicture));
       document.querySelectorAll(".publicationsContent .userProfilePicture img").forEach(image => {
       image.setAttribute('src', URL.createObjectURL(store.state.connectedUser.profilePicture))
     });
     }
+    // Fermeture du menu de modification des informations utilisateur
     this.showUpdateInfosMenu()
+  },
+
+  showParagraph(paragraphName) {
+    if(document.querySelector(`#${paragraphName}`).value !== "") {
+      document.querySelectorAll(`.${paragraphName}Paragraph`).forEach(paragraph => {
+        paragraph.style.display = "inherit"
+      })
+    } else {
+      document.querySelectorAll(`.${paragraphName}Paragraph`).forEach(paragraph => {
+        paragraph.style.display = "none"
+      })
+    }
   },
 
   // SUPPRESSION DU COMPTE UTILISATEUR

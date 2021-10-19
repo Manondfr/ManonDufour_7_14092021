@@ -151,7 +151,6 @@ main p {
 
   &.active {
     display:initial;
-
   }
 }
 
