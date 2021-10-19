@@ -2,7 +2,8 @@ INSTALLATION :
 
 Cloner le repository  
 Accéder au dossier frontend/frontend depuis votre terminal et saisir npm install  
-Accéder au dossier backend depuis votre terminal et saisir npm install  
+Accéder au dossier backend depuis votre terminal et saisir npm install
+Ouvrir le fichier .env et renseigner votre configuration locale  
 
 UTILISATION :
 

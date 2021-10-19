@@ -42,7 +42,7 @@ export default {
       url: 'http://localhost:3000/api/auth/login',
       data: JSON.stringify(body)
     })
-    .then(function() {
+    .then(function(res) {
     localStorage.setItem('userId', res.data.userId);
     localStorage.setItem('xsrfToken', JSON.stringify(res.data.xsrfToken));
     window.location.href = "http://localhost:8080/#/homepage";
