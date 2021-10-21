@@ -15,12 +15,6 @@ const EXPRESS_SESSION_NAME = process.env.EXPRESS_SESSION_NAME;
 
 schema.is().min(5).has().uppercase().has().digits(1).has().symbols(1).has().not().spaces();
 
-/*const emailMaskOptions = {
-  maskWith: "*", 
-  unmaskedStartCharactersBeforeAt: 1,
-  unmaskedEndCharactersAfterAt: 2,
-  maskAtTheRate: false
-};*/
 
 exports.createAdminAccount = (req, res, next) => {
   if(schema.validate(req.body.password)) {
@@ -29,7 +23,7 @@ exports.createAdminAccount = (req, res, next) => {
       User.create({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        email: /*MaskData.maskEmail2(*/req.body.email/*, emailMaskOptions)*/,
+        email: req.body.email,
         password: hash,
         admin: true
       })
@@ -143,8 +137,9 @@ exports.login = (req, res, next) => {
      User.findOne({ where: { id: req.params.id } })
      .then(
        user => {
-         if(req.file) {
-          const filename = user.profilePicture.split('/images/')[1];     
+         const filename = req.file ? user.profilePicture.split('/images/')[1] : null;
+         console.log(filename);
+         if(req.file && filename !== "nouser.jpg") {    
           fs.unlink(`images/${filename}`, () => {
             User.update({
               ...userObject
@@ -192,17 +187,29 @@ exports.login = (req, res, next) => {
     User.findOne({ where: { id: req.params.id } })
     .then(user => {
         const filename = user.profilePicture.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
+        if(filename !== "nouser.jpg") {
+          fs.unlink(`images/${filename}`, () => {
+            req.session.destroy(err => {
+              if (err) {
+                return res.send('http://localhost:8080/#/homepage')
+              }
+              res.clearCookie(EXPRESS_SESSION_NAME);
+            });
+            user.destroy({ where: { id: req.params.id }})
+            .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
+            .catch(error => res.status(400).json({ error }));
+          })          
+        } else {
           req.session.destroy(err => {
             if (err) {
               return res.send('http://localhost:8080/#/homepage')
-          }
-          res.clearCookie(EXPRESS_SESSION_NAME);
+            }
+            res.clearCookie(EXPRESS_SESSION_NAME);
           });
           user.destroy({ where: { id: req.params.id }})
           .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
-          .catch(error => res.status(400).json({ error }));
-        })  
+          .catch(error => res.status(400).json({ error }));          
+        }
     })
     .catch(error => res.status(404).json({ error }));
   };
